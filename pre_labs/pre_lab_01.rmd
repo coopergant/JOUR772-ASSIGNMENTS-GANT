@@ -28,16 +28,16 @@ The library function loads an R library such as the tidyverse, providing access 
 
 ## Instructor in class demonstration outline
 
--   Load this notebook, and provide overview of R, RStudio (text editor, console, environment window, file explorer), Rmarkdown data notebooks, the reference notebook.
--   Work through the code below, chapter by chapter.
-    -   Chapter 8: explain the console and the concept of variables. Explain packages, the Tidyverse, how to install them.
-    -   Chapter 10: explain loading libraries, the concept of functions, loading data, the importance of having questions to guide data analysis, and aggregation and summarization.
+- Load this notebook, and provide overview of R, RStudio (text editor, console, environment window, file explorer), Rmarkdown data notebooks, the reference notebook.
+- Work through the code below, chapter by chapter.
+  - Chapter 8: explain the console and the concept of variables. Explain packages, the Tidyverse, how to install them.
+  - Chapter 10: explain loading libraries, the concept of functions, loading data, the importance of having questions to guide data analysis, and aggregation and summarization.
 
 ## Chapter 8
 
 ### Task 1: The console
 
-**Task** In the console (look below), type 2+2 and hit enter. What does it return? Type your answer below. **Answer:**
+**Task** In the console (look below), type 2+2 and hit enter. What does it return? Type your answer below. **Answer:** [1] 4
 
 ### Task 2: Variables
 
@@ -53,7 +53,7 @@ Then type this code to multiply the variable called number by itself.
 number * number
 ```
 
-What does it return? Type your answer below:
+What does it return? Type your answer below: [1] 4
 
 **Answer:**
 
@@ -95,7 +95,7 @@ umd_courses <- read_rds("umd_courses.rds")
 
 Once it loads, look at the environment window at right in RStudio for umd_courses It's next to a small blue circle with a white arrow in it. To the right of that, look at how many "obs" the dataset has ("obs" is short for observation, which is another way of saying rows or records). Look at how many variables it has (another way of saying columns or fields). Write the number of observations and variables below.
 
-**Answer**
+**Answer: 79366 obs, 9 variables**
 
 ### Task 6: Glimpse data
 
@@ -107,6 +107,8 @@ glimpse(umd_courses)
 
 In the space below, write the data type for the "id" column and the "seats" column (it's in light gray, offset by \< \>). **Answer**
 
+\<chr\> –\> chronological!
+
 ### Task 7: Examine data "head"
 
 **Task** Run the following codeblock to use head() to examine the first six rows of data. Explore the data by clicking the black arrow on the right side of the output table, allowing you to examine additional columns.
@@ -115,7 +117,7 @@ In the space below, write the data type for the "id" column and the "seats" colu
 head(umd_courses)
 ```
 
-In the space below, write the name of the business from the first row of the "name" column. **Answer**
+In the space below, write the name of the business from the first row of the "name" column. **Answer:** Michelle Morrison
 
 ### Task 8: Explore data with interactive dataframe
 
@@ -137,7 +139,7 @@ umd_courses |>
   )
 ```
 
-Describe what you think each line of this code is doing below, based on the result:
+Describe what you think each line of this code is doing below, based on the result: showing how many registered students there have been for each course.
 
 **Answer**
 
@@ -154,7 +156,7 @@ umd_courses |>
   arrange(desc(count_classes))
 ```
 
-Compared to the previous codeblock, what has changed and how did that affect the result? **Answer**
+Compared to the previous codeblock, what has changed and how did that affect the result? **Answer: It organized the count_classes in descending order from the top down.**
 
 ### Task 11: Grouping by multiple columns
 
@@ -171,7 +173,7 @@ umd_courses |>
 
 Compared to the previous codeblock, how did the output change and what in the code changed it?
 
-**Answer**
+**Answer: it organized the courses in alphabetical order by course title.**
 
 ### Task 12: Other summary functions
 
@@ -187,7 +189,7 @@ umd_courses |>
   arrange(desc(total_seats))
 ```
 
-Compared to the previous codeblock, what has changed and how did that affect the result? **Answer**
+Compared to the previous codeblock, what has changed and how did that affect the result? **Answer: it organized the class by total amount of seats**
 
 ### Task 13: different kinds of summarizations
 
@@ -227,7 +229,7 @@ umd_courses |>
 
 Compared to the previous codeblock, what has changed and how did that affect the result? How is the data sorted?
 
-**Answer**
+**Answer;** It now categorizes the data into different subgroups depending on the department, clumping every bit of data into the different majors. It then organizes the data in descending order of median seats.
 
 ### Task 12: Questions
 
@@ -235,8 +237,8 @@ No code here; I want you to provide three questions that this data suggests to y
 
 **Answer**
 
-1.  
+1.  Is the median amount of seats in communication and engineering smaller because they lack people to fill (so the college limits them) or because they are just more specialized and generally have people on specific pathways?
 
-2.  
+2.  How many of the Business and Management school's amount of seats come from 100/200 level courses? Are there massive cohorts that stick together all four years, or do they split off junior and senior year?
 
-3.  
+3.  How many of these students in the largest blocks (Business and Management, Comp Sci) full-time majors? Are a bunch of people taking the course for their degree's minor?
