@@ -39,26 +39,52 @@ umd_courses <- read_rds("lab_01.rds")
 
 ## Answer questions
 
-**Q1** Which department has the highest mean (average) number of seats for its classes? You need to show the department with the highest average first. Which one is the most surprising/interesting to you? **A1**
+**Q1** Which department has the highest mean (average) number of seats for its classes? You need to show the department with the highest average first. Which one is the most surprising/interesting to you? **A1** The highest average is Computer, Math, and Natural Sciences with 440. I find this super interesting, because I understand that UMD's Comp Sci program is top-notch, but I think it doesnt seem like the program that would have a bunch of students from other colleges taking as a minor because of how serious it is.
 
 ```{r}
+umd_courses|> 
+group_by(department)|> 
+  summarise(
+    mean_seats=mean(seats) 
+  ) |> 
+  arrange (desc(mean_seats))
 ```
 
-**Q2** Find out the greatest number of times any individual class has been offered in our dataset. Your code must show the greatest number of classes first.
-**A2**
+**Q2** Find out the greatest number of times any individual class has been offered in our dataset. Your code must show the greatest number of classes first. **A2**
+
+The greatest amount is 29 times!
 
 ```{r}
+umd_courses|> 
+  group_by(id)|> 
+  summarise(term_count = n()) |> 
+arrange(desc(term_count))
+        
 ```
 
-**Q3** Count the number of courses for each instructor and department. Which instructor has taught the most?
-**A3**
+**Q3** Count the number of courses for each instructor and department. Which instructor has taught the most? **A3** Keith Yearwood!
 
 ```{r}
+umd_courses |>  
+  group_by(department, instructors) |> 
+  summarise(
+  count_classes=n()) |> 
+  arrange(desc(count_classes))
+
 ```
 
-**Q4** Given the results for Q3, what would have made it easier to find the answer? You don't have to know *how* to accomplish this; I want you to describe in words what would make the answer easier to see. How confident are you that the answer you got is the right one, and why? **A4**
+**Q4** Given the results for Q3, what would have made it easier to find the answer? You don't have to know *how* to accomplish this; I want you to describe in words what would make the answer easier to see. How confident are you that the answer you got is the right one, and why? **A4\
+I think if there was a way to hide the N/A answers from the data pool without messing up the subcategory of term offers, it would be super helpful! I just organized by amount taken by professors and scrolled a few tabs over to find it!**
 
-**Q5** Take one of the questions you listed in the final question of the pre_lab and try to answer it here in code. If you don't know how to fully answer it, write what code you can and describe in words what else you would need to do. If you got an answer, is it interesting? **A5**
+**\
+Q5** Take one of the questions you listed in the final question of the pre_lab and try to answer it here in code. If you don't know how to fully answer it, write what code you can and describe in words what else you would need to do. If you got an answer, is it interesting? **A5\**
+I went to organize the classes in chronological order with the amount of total course offerings in each semester so I can observe the dip in enrollment during the pandemic and return of student course offerings post-COVID-19. And, since it's a smaller data set, I can very quickly see the semester with the most offerings (2022-08) and track how there was an over-correction that has since dwindled in the last four years. It also might be due to the amount of online offerings provided, which is a lot easier to add more students and courses in without taking up too many resources.**\**
 
 ```{r}
+umd_courses |>
+  group_by(term) |>
+  summarise(
+    count_classes = n()
+  )
+    
 ```
