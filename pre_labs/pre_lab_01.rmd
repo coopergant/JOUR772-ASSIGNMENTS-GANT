@@ -53,9 +53,9 @@ Then type this code to multiply the variable called number by itself.
 number * number
 ```
 
-What does it return? Type your answer below: [1] 4
+What does it return? Type your answer below:
 
-**Answer:**
+**Answer:** [1] 4
 
 ### Task 3: Install packages
 
@@ -107,7 +107,9 @@ glimpse(umd_courses)
 
 In the space below, write the data type for the "id" column and the "seats" column (it's in light gray, offset by \< \>). **Answer**
 
-\<chr\> –\> chronological!
+\<chr\> –\> character! (id)
+
+\<dbl\> –\> numeric! (seats)
 
 ### Task 7: Examine data "head"
 
@@ -117,7 +119,7 @@ In the space below, write the data type for the "id" column and the "seats" colu
 head(umd_courses)
 ```
 
-In the space below, write the name of the business from the first row of the "name" column. **Answer:** Michelle Morrison
+In the space below, write the name from the first row of the "name" column. **Answer:** Michelle Morrison
 
 ### Task 8: Explore data with interactive dataframe
 
@@ -141,7 +143,7 @@ umd_courses |>
 
 Describe what you think each line of this code is doing below, based on the result: showing how many registered students there have been for each course.
 
-**Answer**
+**Answer:**
 
 ### Task 10: Adding arrange to sort the data
 
@@ -173,7 +175,7 @@ umd_courses |>
 
 Compared to the previous codeblock, how did the output change and what in the code changed it?
 
-**Answer: it organized the courses in alphabetical order by course title.**
+**Answer: it organized the courses by term then in alphabetical order by department.**
 
 ### Task 12: Other summary functions
 
@@ -189,9 +191,9 @@ umd_courses |>
   arrange(desc(total_seats))
 ```
 
-Compared to the previous codeblock, what has changed and how did that affect the result? **Answer: it organized the class by total amount of seats**
+Compared to the previous codeblock, what has changed and how did that affect the result? **Answer: adds up all the seats in each term THEN organized by seat totals in descending order.**
 
-### Task 13: different kinds of summarizations
+Task 13: different kinds of summarizations
 
 **Task** Run the following codeblock to group the umd_courses dataframe by term. Then do the following summarizations for each term: count the number of courses, add up the total of all seats, and calculate the mean and median contribution number of seats. Then sort so the term with the most total seats is listed first.
 
@@ -207,7 +209,7 @@ umd_courses |>
   arrange(desc(total_seats))
 ```
 
-Compared to the previous codeblock, what has changed and how did that affect the result? What do the top terms have in common? **Answer**
+Compared to the previous codeblock, what has changed and how did that affect the result? What do the top terms have in common? **Answer: added mean and median seats**
 
 ### Task 14: more aggregations
 
@@ -222,14 +224,16 @@ umd_courses |>
     mean_seats = mean(seats),
     median_seats = median(seats),
     # add minimum seats here
+    min_seats=min(seats),
     # add maximum seats here
+    max_seats=max(seats)
   ) |>
   arrange(desc(total_seats))
 ```
 
 Compared to the previous codeblock, what has changed and how did that affect the result? How is the data sorted?
 
-**Answer;** It now categorizes the data into different subgroups depending on the department, clumping every bit of data into the different majors. It then organizes the data in descending order of median seats.
+**Answer;** It now categorizes the data into different subgroups depending on the department, clumping every bit of data into the different majors. It then organizes the data in descending order of total amount of seats.
 
 ### Task 12: Questions
 
@@ -241,4 +245,4 @@ No code here; I want you to provide three questions that this data suggests to y
 
 2.  How many of the Business and Management school's amount of seats come from 100/200 level courses? Are there massive cohorts that stick together all four years, or do they split off junior and senior year?
 
-3.  How many of these students in the largest blocks (Business and Management, Comp Sci) full-time majors? Are a bunch of people taking the course for their degree's minor?
+3.  How many of these students in the largest blocks (Business and Management, Comp Sci) are full-time majors? Are a bunch of people taking the courses for their degree's minor? Or are there this many full-time students in the biggest programs? That would present a great opportunity for other less-filled programs to grow from, if the minors are super helpful to people pursuing an adjacent degree!
