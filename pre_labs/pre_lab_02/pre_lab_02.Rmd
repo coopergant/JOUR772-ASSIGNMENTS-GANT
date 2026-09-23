@@ -205,7 +205,7 @@ So the month of June 2022 had the most expenditures by far in this data.
 
 Describe the values in the new `month` column - what do you think is going on there?
 
-**Answer**
+**Answer** It's all listed as the first of the month lol. I doubt that's true. Prob a data error.
 
 ### Task 10: Mutate
 
@@ -235,7 +235,8 @@ general_22 <- general_22 |>
 
 Describe what you think this code is doing below.
 
-**Answer**
+**Answer**\
+It sums the data of the votes then divides and calculates by proportion and not just overall.
 
 ### Task 11: Better percentage calculation
 
@@ -264,7 +265,8 @@ general_22 <- general_22 |>
 
 How did the answer change from the previous task, and why?
 
-**Answer**
+**Answer\**
+It now shows the counties where Gov. Moore got the highest percentage of votes at the top
 
 ### Task 13: Mutate with ordering, part 2
 
@@ -278,7 +280,8 @@ general_22 |>
 
 Is this a more interesting or useful answer? Why?
 
-**Answer**
+**Answer**\
+More interesting in my opinion because it highlights the counties where Moore struggled to get real traction since it's now proportional.
 
 ### Task 14: Standardize existing data using mutate
 
@@ -303,6 +306,8 @@ standardized_maryland_expenses <- maryland_expenses |>
 
 **Answer**
 
+I used this [site here](https://stringr.tidyverse.org/reference/case.html) and found `str_to_upper()` converts to upper case, `str_to_lower()` converts to lower case, `str_to_title()` converts to title case (where only the first letter of each word is capitalized), and `str_to_sentence()` convert to sentence case, where only the first letter of sentence is capitalized
+
 There are lots of potential uses for standardization - addresses, zip codes, anything that can be misspelled or abbreviated.
 
 ### Task 15: Create a new column using case_when
@@ -311,7 +316,8 @@ Mutate is even more useful when combined with some additional functions. Let's k
 
 **Task** Run the following code and look at the output. Then write a sentence or two describing what you think the mutate statement is doing step by step.
 
-**Answer**
+**Answer\
+It is creating a new column for the state listed, looking for each state and adding the state's abrieviation in the column that corresponds with the states (VA for Virginia). If the state doesnt exist already in the data, it'll just put NA there.**
 
 ```{r}
 maryland_expenses_with_state <- maryland_expenses |>
@@ -348,6 +354,10 @@ Does this answer make sense to you? Why or why not?
 
 **Answer**
 
+Yeah, it's just combining all of the columns that have the same state in the column the code made and organizing the amounts in that row descending downwards.
+
+-----
+
 Mutate is there to make your data more useful and to make it easier for you to ask more and better questions of it.
 
 ### Task 16: More questions
@@ -356,8 +366,8 @@ Now that you have seen how to use mutate, filtering and dates, give me three que
 
 **Answer**
 
-1.  
+1.   Which months had the most amount of high-dollar spends but low-person-amount (only a few people donated, but they put big bucks behind him)?
 
-2.  
+2.  Which outside state sent the most money proportionally?
 
-3.  
+3.  Who are the most consistent donors? If apportioned over his entire campaign, who donated the most AVERAGE PER MONTH (or something like that)?
