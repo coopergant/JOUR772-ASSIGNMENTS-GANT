@@ -306,7 +306,7 @@ standardized_maryland_expenses <- maryland_expenses |>
 
 **Answer**
 
-I used this [site here](https://stringr.tidyverse.org/reference/case.html) and found `str_to_upper()` converts to upper case, `str_to_lower()` converts to lower case, `str_to_title()` converts to title case (where only the first letter of each word is capitalized), and `str_to_sentence()` convert to sentence case, where only the first letter of sentence is capitalized
+I used this [site here](https://stringr.tidyverse.org/reference/case.html) and found `str_to_upper()` converts to upper case, `str_to_lower()` converts to lower case, `str_to_title()` converts to title case (where only the first letter of each word is capitalized), and `str_to_sentence()` convert to sentence case (where only the first letter of sentence is capitalized).
 
 There are lots of potential uses for standardization - addresses, zip codes, anything that can be misspelled or abbreviated.
 
