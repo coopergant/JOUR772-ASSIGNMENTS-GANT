@@ -115,7 +115,7 @@ and_theatre_seats_15 <- umd_courses |> filter(department == "Theatre" | seats >=
 nrow(and_theatre_seats_15)
 ```
 
-So AND gives us the same answer we got before. What does using the OR operator give us? \
+So AND gives us the same answer we got before. What does using the OR operator give us?\
 It now is 54000! Showing us all of the options that have at LEAST 15 seats OR is a theatre class.
 
 **Task** Run the following code and put the number of results below.
@@ -265,8 +265,7 @@ general_22 <- general_22 |>
 
 How did the answer change from the previous task, and why?
 
-**Answer\**
-It now shows the counties where Gov. Moore got the highest percentage of votes at the top
+\*\*Answer\*\* It now shows the counties where Gov. Moore got the highest percentage of votes at the top
 
 ### Task 13: Mutate with ordering, part 2
 
@@ -356,7 +355,7 @@ Does this answer make sense to you? Why or why not?
 
 Yeah, it's just combining all of the columns that have the same state in the column the code made and organizing the amounts in that row descending downwards.
 
------
+------------------------------------------------------------------------
 
 Mutate is there to make your data more useful and to make it easier for you to ask more and better questions of it.
 
@@ -366,7 +365,7 @@ Now that you have seen how to use mutate, filtering and dates, give me three que
 
 **Answer**
 
-1.   Which months had the most amount of high-dollar spends but low-person-amount (only a few people donated, but they put big bucks behind him)?
+1.  Which months had the most amount of high-dollar spends but low-person-amount (only a few people donated, but they put big bucks behind him)?
 
 2.  Which outside state sent the most money proportionally?
 
