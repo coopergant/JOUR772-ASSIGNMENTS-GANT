@@ -39,7 +39,10 @@ maryland_expenses <- read_csv("data/maryland_expenses.csv")
 
 **Q2.** Of the departments listed in A1, which one is the most interesting to you, and why? **A2.**
 
-**Q3** Which departments offered the most courses in the Fall 2024 term? And which departments in that term have at least one syllabus posted? Answer both of those questions and then compare the top five departments - how are they different?
+```{r}
+```
+
+**'Q3** Which departments offered the most courses in the Fall 2024 term? And which departments in that term have at least one syllabus posted? Answer both of those questions and then compare the top five departments - how are they different?
 
 **A3.**
 
