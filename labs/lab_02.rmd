@@ -32,7 +32,7 @@ maryland_expenses <- read_csv("data/maryland_expenses.csv")
 
 ## Answer questions
 
-**Q1.** How many departments have offered the courses with "Climate" in the title and at least one seat? Which department has offered the most? **A1.**
+**Q1.** How many departments have offered the courses with "Climate" in the title and at least one seat? Which department has offered the most? **A1.** 32 departments courses that have one seat and mention CLIMATE! The dept with the most is Atmospheric and Oceanic Science!
 
 ```{r}
 climate_courses <- umd_courses |>
@@ -42,7 +42,7 @@ climate_courses <- umd_courses |>
   arrange(desc(word_climate))
 ```
 
-**Q2.** Of the departments listed in A1, which one is the most interesting to you, and why? **A2.**
+**Q2.** Of the departments listed in A1, which one is the most interesting to you, and why? **A2.**Anthropology probably. I think that for a humanities major to focus on intersection (in this case with climate) it's likely a higher-level course (300 or 400) so it's surprising there are THAT many options.
 
 ```{r}
 fall_2024 <- umd_courses |>
@@ -50,7 +50,17 @@ fall_2024 <- umd_courses |>
   filter (term==202408 & syllabus_count >= 1)|> summarize(fall_2024 = n())|> arrange(desc(department))
 ```
 
-**'Q3** Which departments offered the most courses in the Fall 2024 term? And which departments in that term have at least one syllabus posted? Answer both of those questions and then compare the top five departments - how are they different?
+**'Q3 Which departments offered the most courses in the Fall 2024 term?**
+
+Business and Management
+
+**And which departments in that term have at least one syllabus posted?**
+
+134
+
+**Answer both of those questions and then compare the top five departments - how are they different?**
+
+The top two are business related, there is randomly the school of music, and the 4th/5th are Comp Sci courses.
 
 **A3.**
 
@@ -58,7 +68,9 @@ fall_2024 <- umd_courses |>
 NewCoopExpense <- maryland_expenses |> mutate (expenditure_date=mdy(expenditure_date))
 ```
 
-**Q4.** Using the Maryland campaign expenses data, change the datatype of the expenditure_date column so that it is a date and not a chr, saving the result as a new dataframe. Then create a new column for the month based on expenditure_date. Then write code that shows total amount spent each month by Wes Moore's committee (you'll need to search the data to find the exact name, and we're not looking in payee_name). Write a sentence describing the pattern of spending over time. **A4.**
+**Q4.** Using the Maryland campaign expenses data, change the datatype of the expenditure_date column so that it is a date and not a chr, saving the result as a new dataframe. Then create a new column for the month based on expenditure_date. Then write code that shows total amount spent each month by Wes Moore's committee (you'll need to search the data to find the exact name, and we're not looking in payee_name). Write a sentence describing the pattern of spending over time.
+
+**A4. The spending starts in 2021 at a decent spike, then flatlines for the rest of the year before going wayyy up in 2022, likely due to the fact that people get a lot more politically charged as we get closer to an election**
 
 ```{r}
 wes_moore <- maryland_expenses |>
@@ -70,7 +82,7 @@ wes_moore <- maryland_expenses |>
   summarize(total_donations = sum(amount))
 ```
 
-**Q5.** Using case_when(), create a column in the Maryland expenses data called `spending_location` indicating whether each record spent money in Maryland or outside Maryland. For records that are in Maryland, make the new column's value "In-state" and for all others, make it "Out of state". Then write code that shows the total amount of money spent in each category and describe the results. You can do this in one statement or break it up into two statements (saving the new column to your dataframe). **A5**
+**Q5.** Using case_when(), create a column in the Maryland expenses data called `spending_location` indicating whether each record spent money in Maryland or outside Maryland. For records that are in Maryland, make the new column's value "In-state" and for all others, make it "Out of state". Then write code that shows the total amount of money spent in each category and describe the results. You can do this in one statement or break it up into two statements (saving the new column to your dataframe). **A5 It is estimated that** \$77723146 — over \$77mn — of Wes Moore's 2022 reported campaign data is from in-state donors whereas \$19390815 – over \$19mn — came from out-of-state donors.
 
 ```{r}
 maryland_expenses |>
@@ -87,7 +99,7 @@ maryland_expenses |>
       str_detect (address, " West Virginia ") ~ "Out of state", .default = NA)) |> group_by(spending_location)|>summarise(total_amount = sum(amount))|> arrange(desc(total_amount))
 ```
 
-**Q6.** Choose your own adventure: using either the UMD courses or campaign expenses data, ask and answer a question that is different than the previous ones. You can use one of the ones you provided in the pre_lab. **A6.**
+**Q6.** Choose your own adventure: using either the UMD courses or campaign expenses data, ask and answer a question that is different than the previous ones. You can use one of the ones you provided in the pre_lab. **A6.** I am curious how many BIG donations were made to the campaign. so i am making a new data piece that is counting how many donations over 10k were made to the campaign? The answer is: [1] 1892
 
 ```{r}
 big_cheese_money <- maryland_expenses |> filter(amount >= 10000)
