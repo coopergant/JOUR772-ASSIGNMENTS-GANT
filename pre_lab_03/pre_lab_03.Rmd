@@ -57,8 +57,7 @@ payments <- read_csv("data/State_of_Maryland_Payments_Data__FY2008_to_FY2024_202
 
 **Task** Run the following codeblock to glimpse the data. What data type is the "Vendor Name" field? What data type is the "Amount" field? What data type is the "Date" column? Answer below.
 
-**Answer\**
-What data type is the "Vendor Name" field? Character\
+\*\*Answer\*\* What data type is the "Vendor Name" field? Character\
 What data type is the "Amount" field? numbers\
 What data type is the "Date" column? Character
 
@@ -74,8 +73,7 @@ The second smell we can find in code is **wrong spatial data**. Spatial data mea
 
 We can check to see if any of the zip codes are less than five characters by using [a function called `str_length`](https://stringr.tidyverse.org/reference/str_length.html) inside a filter.
 
-**Task** Run the following codeblock to group by the vendor's zip code and show any that are less than five characters in length. How many zip codes do not have five characters? What do you think explains those records? **Answer\**
-How many zip codes do not have five characters? 553\
+**Task** Run the following codeblock to group by the vendor's zip code and show any that are less than five characters in length. How many zip codes do not have five characters? What do you think explains those records? \*\*Answer\*\* How many zip codes do not have five characters? 553\
 What do you think explains those records? maybe there is a 0 it is reading wrong?
 
 ```{r}
@@ -203,7 +201,7 @@ cleaned_md_grants_loans
 
 **Task** Run the following codeblock to check for duplicate rows using get_dupes(). How many duplicates are possible?
 
-**Answer**
+**Answer: there are 58 duplicates**
 
 ```{r}
 cleaned_md_grants_loans |>
@@ -289,7 +287,7 @@ Write a sentence describing the top result.
 
 Where is that zip code, and does that zip code make sense to you as the top recipient?
 
-21202 -- Baltimore, Maryland. Specifically, downtown Baltimore. It makes great sense tbh. There is no reason to invest AS Much elsewhere. If they try to do it for PG County, they lose the tourism dollars to DC regardless, so might as well put everything they have behind the state's biggest metro that is 100% Maryland. \
+21202 -- Baltimore, Maryland. Specifically, downtown Baltimore. It makes great sense tbh. There is no reason to invest AS Much elsewhere. If they try to do it for PG County, they lose the tourism dollars to DC regardless, so might as well put everything they have behind the state's biggest metro that is 100% Maryland.\
 
 ```{r}
 
