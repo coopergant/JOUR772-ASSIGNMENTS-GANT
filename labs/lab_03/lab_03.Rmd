@@ -35,14 +35,14 @@ md_grants_loans <- read_csv("data/State_of_Maryland_Grant_and_Loan_Data__FY2009_
 ```{r}
 cleaned_payments <- payments |> clean_names()
 
-#Display that clean ahh mf
+#Display that clean ahh data
 cleaned_payments
 ```
 
 ```{r}
 cleaned_md_grants_loans <- md_grants_loans |> clean_names()
 
-#Display that clean ahh mf
+#Display that clean ahh dataset
 cleaned_md_grants_loans
 ```
 
@@ -54,7 +54,7 @@ HINT: you should use filter() just once, and inside your filter you want to look
 
 When you have found as many as possible, save the result to a new dataframe called `pg_schools`. How many records did you find?
 
-59 RECORDS
+[59 RECORDS]{.underline}
 
 A1:
 
@@ -68,9 +68,13 @@ pg_schools <- cleaned_payments |> filter(
   str_detect(vendor_name, "BOARD OF EDUCATION OF PRINCE GEORGES COUNTY MD"))
 ```
 
-Q2: Using that `pg_schools` dataframe, write code to calculate the total amount of payments to the Prince George's County School system for each fiscal year. Which fiscal year had the largest total amount? 2024 Are there any aspects of the results that stand out to you?
+Q2: Using that `pg_schools` dataframe, write code to calculate the total amount of payments to the Prince George's County School system for each fiscal year. Which fiscal year had the largest total amount? Are there any aspects of the results that stand out to you?
 
-A2:
+**A2:**
+
+**Which fiscal year had the largest total amount?** [2024 did!]{.underline}
+
+**Are there any aspects of the results that stand out to you?** [2016 – a year well-before the covid cost-hike and long after the 08 crash, is randomly in the top 5.]{.underline}
 
 ```{r}
 
@@ -81,7 +85,13 @@ Q3. You're interested in examining the vendors paid for capital projects at the 
 
 Look carefully at that list - what cleaning will it require to ensure that you have only one row per vendor and zip code? Provide at least three examples of vendor names that are similar and should be combined into one. Describe in words how you might clean that data so that any nearly identical vendors would look identical - what would you change and how?
 
-A3.
+A3. [I would have to standardize all of the names to be uppercase, and then have similar cells merge using str_to_upper(tktk) from pre-lab 3. If I standardized them, the following duplicate data entries would be merged and not be an issue:]{.underline}
+
+[A MORTON THOMAS & ASSOC INC + A MORTON THOMAS & ASSOCIATES INC \<-- Assoc instead of associates]{.underline}
+
+[A & I INC + A & I INC. \<-- the period makes the error]{.underline}
+
+[AMTEK COMPANY INC + AMTEK COMPANY, INC. \<-- that damn comma. I hate when companies do this.]{.underline}
 
 ```{r}
 cleaned_payments |> filter(
@@ -91,14 +101,18 @@ cleaned_payments |> filter(
 
 Q4: You want to understand how much state grant money went to stem cell research projects each fiscal year. Search the data to find grants that fit that description. Once you find which column(s) contain the information you want, your code should find just the grants for stem cell research in a single filter. Then calculate the total amount of money for each fiscal year. Write a sentence summarizing how stem cell research funding has changed over time.
 
-A4:
+[A4: Stem cell research started getting funding in 2020, decreased a tad bit in 2021 – likely due to pandemic – returned to its average amount in 2022, and then made a massive jump in funding going into 2023.]{.underline}
 
 ```{r}
+cleaned_md_grants_loans |> filter(str_detect(description, "STEM CELL")) |> group_by(fiscal_year) |> summarise(total_amount = sum(amount)) |> arrange(desc(fiscal_year))
 ```
 
 Q5: Using the Maryland grants and loan data, find records where the zip code is the one where the University of Maryland-College Park is located in and produce a list of grantees from that zip code, along with the total amount they received. Write a paragraph explaining how many grantees are there, what you would need to do to clean the results so that you had one record per grantee and which grantees are most interesting to you?
 
-A5:
+[A5: There are 51 grantees but several are the same institution (or basically the same) listed differently (like UMD vs University of Maryland, College Park) and the two different UMD foundation names. str_to_upper() would correct the ones that are different capitalization-wise but the case_when() tool would match the ones with differing names to be combined into one name. Plus on those ones I could confirm that they are NOT two separate organiazations using zip codes and then merge them. I think the most interesting resule is "Ikea - College Park - Solar Canopy' because why the hell does an IKEA (multi-billion-dollar private company btw) need a state grant?]{.underline}
+
+*Write a paragraph explaining how many grantees are there, what you would need to do to clean the results so that you had one record per grantee and which grantees are most interesting to you?*
 
 ```{r}
+cleaned_md_grants_loans |> filter(str_detect(zip_code, "20740") | str_detect(zip_code, "20741") | str_detect(zip_code, "20742")) |> group_by(grantee) |> summarise(total_amount = sum(amount)) |> arrange(desc(total_amount))
 ```
