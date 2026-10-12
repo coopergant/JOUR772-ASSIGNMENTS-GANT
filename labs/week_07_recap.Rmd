@@ -122,7 +122,7 @@ earthquakes |> group_by(type) |> count()
 
 #### **Q9** How do I calculate the average depth of each type of tremor? What is the average depth of the earthquake type in this data set? Is there anything that seems unusual or surprising in this finding?
 
-**A9: Earthquakes are about 23 feet deep. The abnormal part of the data, in my opinion, is that there are two negative averages.**
+**A9: Earthquakes are about 23 km deep. The abnormal part of the data, in my opinion, is that there are two negative averages.**
 
 ```{r}
 earthquakes |> group_by(type) |> summarise(avggg_depth = mean(depth)) |> arrange(desc(avggg_depth))
@@ -133,7 +133,7 @@ earthquakes |> group_by(type) |> summarise(avggg_depth = mean(depth)) |> arrange
 #### **Q10** I'm interested, in the future, to see the hours in which earthquakes happen. How can I extract the hour from the time column?
 
 ```{r}
-the_moment_of_shakin_and_bakin <- earthquakes |> mutate(hour_of_day = hour(time))
+earthquakes <- earthquakes |> mutate(hour_of_day = hour(time))
 
 earthquakes |>
   group_by(hour_of_day) |>
@@ -142,9 +142,9 @@ earthquakes |>
 ```
 
 
-**A10: I created a new dataset called "the moment of shakin and bakin" (hopefully this topic isnt to somber and serious this lands poorly lol), extracted the hour with hour(time), grouped by it and the had it list in descending order**
+**A10: I created a new dataset, extracted the hour with hour(time), grouped by it and the had it list in descending order**
 
-The answer is 8pm!
+The answer is hour 8!
 
 ------------------------------------------------------------------------
 
@@ -176,7 +176,7 @@ earthquakes |>
 
 #### EXTRA Q What other questions are you interested in and how would you ask them in R?
 
-How many quakes happened at least 100 feet deep? 496 did!
+How many quakes happened at least 100 km deep? 496 did!
 
 ```{r}
 big_beluga_quakes <- earthquakes |> filter(depth >= 100)
