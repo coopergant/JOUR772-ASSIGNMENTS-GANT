@@ -1,0 +1,296 @@
+---
+title: "Who's worth the money?"
+author: "Cooper Gant"
+date: "2026-10-13"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## The idea
+
+NBA teams pay players for what they expect them to do. This notebook checks that against what players actually did. It lines up each player's **2026-27 salary** (from Basketball-Reference) with their **2025-26 regular-season stats** (from hoopR), then asks who gives their team the most for its money and who gives the least.
+
+## Load libraries and establish settings
+
+```{r}
+# Turn off scientific notation
+options(scipen=999)
+
+library(tidyverse)
+library(hoopR)
+library(scales)
+```
+
+## Load Data
+
+### Contracts
+
+This is the same cleaned contracts file from before. A few players show up twice because two teams still owe them money. We only want each player once, so `distinct()` keeps the first row for each player.
+
+```{r}
+contracts <- read_csv("data/contracts_wide.csv") |>
+  distinct(player, .keep_all = TRUE) |>
+  select(player, team, player_id, salary_2026_27, guaranteed, seasons_remaining)
+```
+
+### Stats from hoopR
+
+`load_nba_player_box()` downloads every player's box score from every game, using ESPN data that hoopR stores on GitHub. hoopR names a season by the year it **ends**, so `seasons = 2026` means 2025-26.
+
+It's a big download, so this code saves a copy the first time and reads that copy after. To re-download (for example, once the 2026-27 season is underway), delete `data/player_box_2025_26.rds` and knit again.
+
+```{r}
+box_file <- "data/player_box_2025_26.rds"
+
+if (!file.exists(box_file)) {
+  load_nba_player_box(seasons = 2026) |> saveRDS(box_file)
+}
+
+box <- read_rds(box_file)
+
+nrow(box)
+```
+
+Each row is **one player in one game**. To get one row per player, we need to `group_by()` and `summarise()`, the same move from lab 2.
+
+A few things to filter out first:
+
+- `season_type == 2` is the regular season. (3 is the playoffs and 5 is the play-in, which not every team plays.)
+- `did_not_play == FALSE` drops games where a player sat on the bench, so they don't drag down the averages.
+
+### A single number for production: Game Score
+
+Points alone don't capture a player's value. A center who rebounds and blocks shots can matter as much as a scorer. So we'll also use **Game Score**, a formula created by John Hollinger (formerly of ESPN) that combines a box score into one number. It rewards points, rebounds, assists, steals and blocks, and it subtracts for missed shots, turnovers and fouls. Roughly: 10 is an average game, 20+ is a great one and 40+ is a monster.
+
+```{r}
+player_stats <- box |>
+  filter(season_type == 2 & did_not_play == FALSE & !is.na(minutes)) |>
+  mutate(
+    game_score = points + 0.4 * field_goals_made - 0.7 * field_goals_attempted -
+      0.4 * (free_throws_attempted - free_throws_made) +
+      0.7 * offensive_rebounds + 0.3 * defensive_rebounds +
+      steals + 0.7 * assists + 0.7 * blocks - 0.4 * fouls - turnovers
+  ) |>
+  group_by(athlete_id, athlete_display_name) |>
+  summarise(
+    games = n(),
+    mpg = mean(minutes),
+    ppg = mean(points),
+    rpg = mean(rebounds),
+    apg = mean(assists),
+    total_points = sum(points),
+    game_score = mean(game_score),
+    # True shooting %: scoring efficiency that counts 3s and free throws
+    ts_pct = sum(points) / (2 * (sum(field_goals_attempted) + 0.44 * sum(free_throws_attempted)))
+  ) |>
+  ungroup()
+
+player_stats |> arrange(desc(game_score)) |> head(10)
+```
+
+### Joining the two
+
+The two datasets don't share an ID, so we have to join on **names**, and the names don't always match. Basketball-Reference writes "Nikola Jokić" with an accent and "Jaren Jackson Jr." with a suffix, and ESPN may not. So we make a `name_key` that strips accents, punctuation and suffixes, then join on that.
+
+The function below is new: it's a custom function, which saves us from writing the same cleanup steps twice. `stri_trans_general()` turns "ć" into "c".
+
+```{r}
+clean_name <- function(name) {
+  name |>
+    stringi::stri_trans_general("Latin-ASCII") |>
+    str_to_lower() |>
+    str_remove_all("[.'’-]") |>
+    str_remove("\\s+(jr|sr|ii|iii|iv|v)$") |>
+    str_squish()
+}
+
+contracts <- contracts |>
+  mutate(name_key = clean_name(player))
+
+player_stats <- player_stats |>
+  mutate(
+    # One player goes by a different first name on each site
+    athlete_display_name = case_when(
+      athlete_display_name == "Ronald Holland II" ~ "Ron Holland",
+      TRUE ~ athlete_display_name
+    ),
+    name_key = clean_name(athlete_display_name)
+  )
+
+worth <- contracts |>
+  inner_join(player_stats, by = "name_key")
+
+nrow(worth)
+```
+
+**Always check who didn't match.** `anti_join()` shows contracts with no 2025-26 stats.
+
+```{r}
+contracts |>
+  anti_join(player_stats, by = "name_key") |>
+  arrange(desc(salary_2026_27)) |>
+  select(player, team, salary_2026_27)
+```
+
+These are almost all expected, not join errors. Most are **2026 draft picks** (AJ Dybantsa, Darryn Peterson, Cameron Boozer) and **international signings** who have never played an NBA game. The rest **missed all of 2025-26 injured**: Tyrese Haliburton, Kyrie Irving, Damian Lillard and Fred VanVleet. None of them can be judged on last season, so leaving them out is right.
+
+### Setting a fair minimum
+
+A player who scored 30 points in their only 2 games would look like a superstar. So for the questions below, we'll only count players with **at least 40 games and 20 minutes per game**, enough of a sample to judge.
+
+```{r}
+regulars <- worth |>
+  filter(games >= 40 & mpg >= 20)
+
+nrow(regulars)
+```
+
+------------------------------------------------------------------------
+
+## Q1. Who costs the most per point?
+
+The simplest value stat: divide what a player will make this season by how many points they scored last season.
+
+```{r}
+per_point <- regulars |>
+  mutate(dollars_per_point = salary_2026_27 / total_points) |>
+  select(player, team, salary_2026_27, games, ppg, dollars_per_point) |>
+  arrange(desc(dollars_per_point))
+
+# Most expensive points
+per_point |> head(10)
+
+# Cheapest points
+per_point |> arrange(dollars_per_point) |> head(10)
+```
+
+**A1.** The most expensive scorer is `r per_point$player[1]` (`r per_point$team[1]`), who will cost `r dollar(per_point$dollars_per_point[1])` for every point they scored last season. The cheapest is `r per_point$player[nrow(per_point)]`, at just `r dollar(per_point$dollars_per_point[nrow(per_point)])` per point.
+
+*Why this stat is limited: it punishes players whose job isn't scoring. A defensive center who averages 9 points can be worth every dollar. That's why Q2 switches to Game Score.*
+
+------------------------------------------------------------------------
+
+## Q2. Does pay actually follow production?
+
+If the NBA paid players exactly for what they produced, every dot below would sit on the line. Dots **above** the line are paid more than their production suggests. Dots **below** are bargains.
+
+```{r, fig.width=9, fig.height=6}
+# Label a handful of the most extreme players so the chart isn't a mess
+fit <- lm(salary_2026_27 ~ game_score, data = regulars)
+
+regulars <- regulars |>
+  mutate(
+    expected_salary = predict(fit, regulars),
+    value_gap = salary_2026_27 - expected_salary
+  )
+
+to_label <- bind_rows(
+  regulars |> slice_max(value_gap, n = 5),
+  regulars |> slice_min(value_gap, n = 5),
+  regulars |> slice_max(game_score, n = 3)
+) |>
+  distinct(player, .keep_all = TRUE)
+
+regulars |>
+  ggplot(aes(x = game_score, y = salary_2026_27)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_text(data = to_label, aes(label = player), size = 3, vjust = -0.8) +
+  scale_y_continuous(labels = label_dollar(scale = 1e-6, suffix = "M")) +
+  labs(
+    title = "Pay vs. production",
+    subtitle = "2026-27 salary vs. 2025-26 Game Score per game (min. 40 games, 20 mpg)",
+    x = "Game Score per game (2025-26)",
+    y = "2026-27 salary",
+    caption = "Source: Basketball-Reference, hoopR/ESPN"
+  ) +
+  theme_minimal()
+
+cor(regulars$game_score, regulars$salary_2026_27)
+```
+
+**A2.** Pay does follow production, but loosely. The correlation between Game Score and salary is `r round(cor(regulars$game_score, regulars$salary_2026_27), 2)`. (1 would be a perfect match and 0 no connection at all.) Better players do get paid more, but plenty of players sit far from the line in both directions.
+
+*What's `lm()`? It stands for "linear model," and it draws the best-fitting straight line through the dots. `predict()` then tells us what each player "should" earn based on their Game Score. That's `expected_salary`, and we'll use it in Q3.*
+
+------------------------------------------------------------------------
+
+## Q3. Who's most overpaid and underpaid?
+
+`value_gap` is a player's real salary minus what the line says they should earn. A big **positive** gap means overpaid. A big **negative** gap means a bargain.
+
+```{r}
+# Most overpaid
+regulars |>
+  arrange(desc(value_gap)) |>
+  select(player, team, salary_2026_27, game_score, expected_salary, value_gap) |>
+  head(10)
+
+# Biggest bargains
+regulars |>
+  arrange(value_gap) |>
+  select(player, team, salary_2026_27, game_score, expected_salary, value_gap) |>
+  head(10)
+```
+
+Many of the bargains are young players on **rookie contracts**, which are cheap by rule, so of course they're bargains. A fairer test: among players making real money (\$25M+), who earns it?
+
+```{r}
+big_contracts <- regulars |>
+  filter(salary_2026_27 >= 25000000) |>
+  arrange(value_gap) |>
+  select(player, team, salary_2026_27, game_score, value_gap)
+
+# Best value among big contracts
+big_contracts |> head(5)
+
+# Worst value among big contracts
+big_contracts |> arrange(desc(value_gap)) |> head(5)
+```
+
+**A3.** Among \$25M+ players, `r big_contracts$player[1]` is the best value: they produced like a player worth `r dollar(big_contracts$salary_2026_27[1] - big_contracts$value_gap[1])` but will make `r dollar(big_contracts$salary_2026_27[1])`. The least value is `r big_contracts$player[nrow(big_contracts)]`, paid `r dollar(big_contracts$value_gap[nrow(big_contracts)])` more than their production suggests.
+
+*Before you call anyone "overpaid," ask why. Older stars are often paid for past seasons. Some players were hurt for part of the year, and some players' value (defense, spacing, leadership) never shows up in a box score.*
+
+------------------------------------------------------------------------
+
+## Q4. Which teams get the most bang for their buck?
+
+Add up each team's salary and production, then divide. Note that this uses each player's **2026-27 team**, so a player traded over the summer counts for their new team.
+
+```{r}
+team_value <- regulars |>
+  group_by(team) |>
+  summarise(
+    players = n(),
+    total_salary = sum(salary_2026_27),
+    total_game_score = sum(game_score)
+  ) |>
+  mutate(salary_per_game_score = total_salary / total_game_score) |>
+  arrange(salary_per_game_score)
+
+team_value
+```
+
+**A4.** `r team_value$team[1]` gets the most production for its money, paying `r dollar(team_value$salary_per_game_score[1])` per point of Game Score. `r team_value$team[nrow(team_value)]` pays the most, at `r dollar(team_value$salary_per_game_score[nrow(team_value)])`.
+
+------------------------------------------------------------------------
+
+## Caveats to keep in mind
+
+- **Last season's stats, this season's salary.** A player who improves or declines this year will look different. Once 2026-27 games are played, change `seasons = 2026` to `seasons = 2027` and re-run.
+- **Box scores miss defense.** Game Score barely sees good defense, which hurts players like defensive wings.
+- **Rookie contracts and minimum deals** are capped by league rules, so they'll always look like bargains.
+- **The 40-game / 20-minute cutoff is a choice.** Try changing it and see who moves in or out.
+
+## Your turn: ideas to try
+
+1. Swap Game Score for `ts_pct` (scoring efficiency) in Q2. Do the most efficient scorers get paid more?
+2. Add `guaranteed` money to Q3. Which overpaid players are also owed the most in future years?
+3. Use `case_when()` to label players "rookie deal" if they make under \$15M with 4 or fewer seasons remaining, then rerun Q3 without them.

@@ -1,0 +1,117 @@
+---
+title: "nba_contracts_analysis"
+author: "Cooper Gant"
+date: "2026-10-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# Turn off scientific notation
+options(scipen=999)
+```
+
+## Loading the packages
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(scales)
+```
+
+## Load Data
+
+The data comes from Basketball-Reference's 2026-27 NBA player contracts table. Each row is one player-team entry, with a salary column for each season from 2026-27 through 2031-32 and the total guaranteed money remaining.
+
+One thing to watch: a few players (Damian Lillard, Bradley Beal, Klay Thompson and others) show up on more than one team because they were waived or traded and multiple teams still owe them money. Their salary columns repeat the full contract on every row, so `multi_team_entry` flags them. Any time we add up salaries, we need to count each player once.
+
+```{r}
+contracts <- read_csv("data/contracts_wide.csv")
+
+glimpse(contracts)
+```
+
+------------------------------------------------------------------------
+
+#### **Q1** Which teams have the most 2026-27 salary committed to players on their current roster?
+
+To keep this fair, I'm leaving out the multi-team rows, since those salaries are split between teams in ways this table doesn't show (it only lists each team's guaranteed share).
+
+```{r}
+team_payroll <- contracts |>
+  filter(multi_team_entry == FALSE) |>
+  group_by(team) |>
+  summarise(
+    players = n(),
+    payroll_2026_27 = sum(salary_2026_27),
+    top_salary = max(salary_2026_27)
+  ) |>
+  arrange(desc(payroll_2026_27))
+
+team_payroll
+
+team_payroll |>
+  ggplot(aes(x = reorder(team, payroll_2026_27), y = payroll_2026_27)) +
+  geom_col() +
+  geom_hline(yintercept = 164961000, linetype = "dashed") +
+  geom_hline(yintercept = 221686000, linetype = "dashed") +
+  coord_flip() +
+  scale_y_continuous(labels = label_dollar(scale = 1e-6, suffix = "M")) +
+  labs(
+    title = "2026-27 salary committed by team",
+    subtitle = "Dashed line = $164.96M salary cap. Excludes players listed on multiple teams.",
+    x = NULL, y = NULL,
+    caption = "Source: Basketball-Reference"
+  )
+```
+
+**A1:** `r team_payroll$team[1]` has the most committed, at `r dollar(team_payroll$payroll_2026_27[1])` across `r team_payroll$players[1]` players. `r sum(team_payroll$payroll_2026_27 > 164961000)` teams are already over the $164,961,000 salary cap.
+
+------------------------------------------------------------------------
+
+#### **Q2** Which players get the biggest raises between 2026-27 and 2027-28?
+
+A big jump usually means a rookie-scale extension or a new deal starts next season, which makes these players' teams worth watching for cap problems.
+
+```{r}
+raises <- contracts |>
+  filter(multi_team_entry == FALSE, !is.na(salary_2027_28)) |>
+  mutate(
+    raise = salary_2027_28 - salary_2026_27,
+    pct_raise = raise / salary_2026_27
+  ) |>
+  select(player, team, salary_2026_27, salary_2027_28, raise, pct_raise) |>
+  arrange(desc(raise))
+
+raises |> head(10)
+```
+
+**A2:** `r raises$player[1]` (`r raises$team[1]`) has the biggest raise. They go from `r dollar(raises$salary_2026_27[1])` to `r dollar(raises$salary_2027_28[1])`, an increase of `r dollar(raises$raise[1])` (`r percent(raises$pct_raise[1], accuracy = 1)`).
+
+------------------------------------------------------------------------
+
+#### **Q3** How concentrated is NBA money? What share of all 2026-27 salary goes to the top 10% of players?
+
+Here I count each player once with `distinct()`, so the multi-team players aren't double counted. (This is the same method Basketball-Reference uses for its average-salary figure.)
+
+```{r}
+players <- contracts |>
+  distinct(player_id, player, .keep_all = TRUE) |>
+  arrange(desc(salary_2026_27))
+
+top_n_players <- ceiling(nrow(players) * 0.10)
+
+concentration <- players |>
+  mutate(group = if_else(row_number() <= top_n_players, "Top 10%", "Everyone else")) |>
+  group_by(group) |>
+  summarise(
+    players = n(),
+    total_salary = sum(salary_2026_27),
+    avg_salary = mean(salary_2026_27)
+  ) |>
+  mutate(share_of_salary = total_salary / sum(total_salary))
+
+concentration
+```
+
+**A3:** The top `r top_n_players` players (the top 10%) earn `r percent(concentration$share_of_salary[concentration$group == "Top 10%"], accuracy = 0.1)` of all 2026-27 salary. They average `r dollar(concentration$avg_salary[concentration$group == "Top 10%"])`, compared with `r dollar(concentration$avg_salary[concentration$group == "Everyone else"])` for everyone else.

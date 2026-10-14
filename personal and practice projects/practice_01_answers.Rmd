@@ -1,0 +1,97 @@
+---
+title: "practice_01_answers"
+author: "Cooper Gant"
+date: "2026-10-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Answer key for practice_01
+
+Try `practice_01.Rmd` on your own before you look at these!
+
+```{r}
+options(scipen=999)
+library(tidyverse)
+
+contracts <- read_csv("data/contracts_wide.csv")
+```
+
+------------------------------------------------------------------------
+
+**Q1.** Which Knicks (`NYK`) players make more than \$20 million in 2026-27? Who's the highest-paid Knick?
+
+```{r}
+knicks_20m <- contracts |>
+  filter(team == "NYK" & salary_2026_27 > 20000000) |>
+  select(player, team, salary_2026_27) |>
+  arrange(desc(salary_2026_27))
+
+knicks_20m
+```
+
+**A1.** Five Knicks make more than \$20 million: Karl-Anthony Towns, OG Anunoby, Jalen Brunson, Mikal Bridges and Josh Hart. Towns is the highest paid at \$57,078,728.
+
+*Common mistake: writing `team = "NYK"` with one equals sign. Inside `filter()` you need `==`, which asks "is this equal?" A single `=` tries to assign a value instead.*
+
+------------------------------------------------------------------------
+
+**Q2.** Sort every player into a pay tier, then count the players and find the average salary in each tier.
+
+```{r}
+pay_tiers <- contracts |>
+  filter(multi_team_entry == FALSE) |>
+  mutate(
+    pay_tier = case_when(
+      salary_2026_27 >= 40000000 ~ "Star",
+      salary_2026_27 >= 15000000 ~ "Starter",
+      salary_2026_27 >= 5000000 ~ "Role player",
+      TRUE ~ "Minimum"
+    )
+  ) |>
+  group_by(pay_tier) |>
+  summarise(
+    players = n(),
+    avg_salary = mean(salary_2026_27)
+  ) |>
+  arrange(desc(players))
+
+pay_tiers
+```
+
+**A2.** "Minimum" is the biggest tier, with 209 players averaging about \$2.7 million. Only 44 players are "Stars," but they average about \$48.4 million each, roughly 18 times what a minimum player makes. Most of the league is paid close to the bottom, while a small group at the top takes in a huge share of the money.
+
+*Why the order inside `case_when()` matters: R checks each line from top to bottom and stops at the first one that's true. Because the \$40M check comes first, a \$45M player is labeled "Star" before R ever reaches the \$15M line. `TRUE ~ "Minimum"` at the end catches everyone left over.*
+
+------------------------------------------------------------------------
+
+**Q3.** How many players have "Jr." in their name, and which team has the most of them? How much are those players paid in 2026-27 for each team?
+
+```{r}
+jr_players <- contracts |>
+  filter(str_detect(player, fixed("Jr.")))
+
+nrow(jr_players)
+
+jr_players |>
+  group_by(team) |>
+  summarise(
+    jr_players = n(),
+    total_salary = sum(salary_2026_27)
+  ) |>
+  arrange(desc(jr_players))
+```
+
+**A3.** 23 players have "Jr." in their name. Milwaukee has the most, with 3, who are paid \$26,529,841 combined in 2026-27. Brooklyn has only 2, but they're paid the most combined: \$49,593,150.
+
+*The trap: try `str_detect(player, "Jr.")` without `fixed()`. You get 24 rows instead of 23. In `str_detect()`, a period means "any character," so "Jr." also matches the "Jru" in **Jrue Holiday**. `fixed()` tells R to look for the exact characters you typed.*
+
+```{r}
+# See the extra match for yourself
+contracts |>
+  filter(str_detect(player, "Jr.") & !str_detect(player, fixed("Jr."))) |>
+  select(player, team)
+```

@@ -1,0 +1,82 @@
+---
+title: "practice_01"
+author: "Cooper Gant"
+date: "2026-10-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load libraries and establish settings
+
+```{r}
+# Turn off scientific notation
+options(scipen=999)
+
+library(tidyverse)
+```
+
+## Load Data
+
+This is the 2026-27 NBA player contracts data from Basketball-Reference. Each row is one player on one team. The salary columns (`salary_2026_27` through `salary_2031_32`) hold what that player is paid each season. A blank (`NA`) means there's no contract for that season.
+
+Heads up: a few players show up twice because two teams still owe them money. The `multi_team_entry` column is `TRUE` for those rows.
+
+```{r}
+contracts <- read_csv("data/contracts_wide.csv")
+```
+
+Before you start, get a feel for the data. Look at the column names and how many rows there are.
+
+```{r}
+glimpse(contracts)
+```
+
+## Practice questions
+
+Write your code in the empty block under each question, then write your answer in a sentence. The hints list the functions you'll need. They're all ones you used in labs 1-3. The answer key is in `practice_01_answers.Rmd`, but try it yourself first!
+
+------------------------------------------------------------------------
+
+**Q1.** Which Knicks (`NYK`) players make more than \$20 million in 2026-27? Show only their name, team and 2026-27 salary, sorted from highest to lowest. Who's the highest-paid Knick?
+
+*Hint: `filter()` with two conditions joined by `&`, then `select()`, then `arrange(desc())`.*
+
+```{r}
+
+```
+
+**A1.**
+
+------------------------------------------------------------------------
+
+**Q2.** Sort every player into a pay tier based on their 2026-27 salary:
+
+- **"Star"**: \$40 million or more
+- **"Starter"**: \$15 million up to \$40 million
+- **"Role player"**: \$5 million up to \$15 million
+- **"Minimum"**: under \$5 million
+
+Leave out the multi-team rows (`multi_team_entry == FALSE`) so nobody is counted twice. Then count how many players are in each tier and find each tier's average salary. Which tier has the most players? Does that surprise you?
+
+*Hint: `filter()`, then `mutate()` with `case_when()` to make a new `pay_tier` column, then `group_by()` + `summarise()` with `n()` and `mean()`.*
+
+```{r}
+
+```
+
+**A2.**
+
+------------------------------------------------------------------------
+
+**Q3.** How many players have "Jr." in their name, and which team has the most of them? Then total up how much those "Jr." players are paid in 2026-27 for each team.
+
+*Hint: `filter()` with `str_detect()`, then `group_by(team)` + `summarise()` with `n()` and `sum()`, then `arrange(desc())`. Watch out: the period in "Jr." is a special character in `str_detect()`. Try `fixed("Jr.")` as the pattern if your results look weird.*
+
+```{r}
+
+```
+
+**A3.**
