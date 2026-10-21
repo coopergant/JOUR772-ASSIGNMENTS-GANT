@@ -74,6 +74,8 @@ A2.
 
 ```{r}
 
+calls_by_county <- calls_by_county |>
+  mutate(month = month(date, label = TRUE))
 ```
 
 Q3. Let's turn to the Baltimore City data. You're interested in exploring calls in zip codes with a high percentage of children under 18. Write code to isolate calls in zip codes where the percentage of under 18 population is at least 75% and then show the zip code and population and how many calls occurred in each of those zip codes.
