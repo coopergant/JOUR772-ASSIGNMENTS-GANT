@@ -37,7 +37,7 @@ Let’s explore.
 
 Let's say that we have Maryland county voter registration data from five different elections in five different files. They have the same record layout and the same number of counties (plus Baltimore City). We can combine them into a single dataframe.
 
-**Task** Load the five CSV files. Do they have the same column structure? **Answer Yes, diffferent orders**
+**Task** Load the five CSV files. Do they have the same column structure? **Answer Yes, bigger difference.**
 
 ```{r}
 county_voters_2016 <- read_csv("data/county_voters_2016.csv")
@@ -100,7 +100,7 @@ We can do this join multiple ways and get a similar result. We can put the popul
 
 ### Task 5: Join population and voter data
 
-**Task** Run the following code to join Maryland population data and the 2020 voter registration data together using the common column county as the key. How many rows are there now? How many *should* there be? **Answer**
+**Task** Run the following code to join Maryland population data and the 2020 voter registration data together using the common column county as the key. How many rows are there now? How many *should* there be? **Answer There are 24 rows , which is how mant there SHOULD be with all the years added up**
 
 ```{r}
 # with nrow included to show row total
