@@ -37,7 +37,7 @@ Let’s explore.
 
 Let's say that we have Maryland county voter registration data from five different elections in five different files. They have the same record layout and the same number of counties (plus Baltimore City). We can combine them into a single dataframe.
 
-**Task** Load the five CSV files. Do they have the same column structure? **Answer**
+**Task** Load the five CSV files. Do they have the same column structure? **Answer Yes, diffferent orders**
 
 ```{r}
 county_voters_2016 <- read_csv("data/county_voters_2016.csv")
@@ -61,7 +61,7 @@ county_voters_combined <- bind_rows(list(county_voters_2016, county_voters_2018,
 View(county_voters_combined)
 ```
 
-What's wrong here?
+What's wrong here? Data is now just stacked on top of each other to create this big, ugly mess
 
 ```{r}
 # Renaming the Total column in county_voters_2022
@@ -84,7 +84,7 @@ Let’s start by reading in some Maryland 2020 county population data:
 
 ### Task 4: Loading population data
 
-**Task** Load the Maryland 2020 county population data **Answer**
+**Task** Load the Maryland 2020 county population data **Answer done!**
 
 ```{r}
 maryland_population <- read_csv('data/maryland_population_2020.csv')
@@ -120,7 +120,9 @@ When the join column is obvious - it's the same name in both dataframes - R will
 
 ### Task 7: Assign Joined Data to New Dataframe
 
-**Task** Create a new dataframe with population and voter data joined together. What does the output message below say about the join? **Answer**
+**Task** Create a new dataframe with population and voter data joined together. What does the output message below say about the join? **Answer :** Joining with `by = join_by(COUNTY)`
+
+(like Prof. Trielli said, "like 'hey, \*\*\*hole, I am joining this way since YOU wont specify' or something!"
 
 ```{r}
 maryland_population_with_voters <- maryland_population |> left_join(county_voters_2020)
@@ -154,7 +156,7 @@ We can get this by using mutate and arrange:
 
 ### Task 10: Asking Demographic Questions
 
-**Task** Using mutate, let's find the county with the highest 18+ Black population as a percentage of all population 18 and over and also the percentage of Democrats in that county. Put your answers below. **Answer**
+**Task** Using mutate, let's find the county with the highest 18+ Black population as a percentage of all population 18 and over and also the percentage of Democrats in that county. Put your answers below. **Answer** Prince George's!
 
 ```{r}
 maryland_population_with_voters_and_demographics |>
@@ -169,7 +171,7 @@ Let’s change that to look at Asian population:
 
 ### Task 11: Asking Demographic Questions
 
-**Task** Now let's find the county with the highest 18+ Asian population as a percentage of all population 18 and over and also the percentage of Democrats in that county. How do these results compare to the previous task? Put your answers below. **Answer**
+**Task** Now let's find the county with the highest 18+ Asian population as a percentage of all population 18 and over and also the percentage of Democrats in that county. How do these results compare to the previous task? Put your answers below. **Answer** Howard and Montgomery skyrocket to the top!
 
 ```{r}
 maryland_population_with_voters_and_demographics |>
@@ -182,7 +184,7 @@ maryland_population_with_voters_and_demographics |>
 
 Sometimes joins look like they should work but don't. Often this is due to the two columns you're joining on having different data types: joining a <chr> column to a <dbl> column, for example. Let's walk through an example of that using some demographic data by zip code.
 
-**Task** Run the following code to load the Zip Code Tabulation Area data for Maryland. What's the datatype of the ZCTA5N? column? **Answer**
+**Task** Run the following code to load the Zip Code Tabulation Area data for Maryland. What's the datatype of the ZCTA5N? column? **Answer: it is a digit/numeric type, which means it cant be easily merged,.**
 
 ```{r}
 maryland_zcta <- read_csv('data/maryland_zcta.csv')
@@ -191,7 +193,7 @@ glimpse(maryland_zcta)
 
 The column we're interested in, ZCTA5N, is a <dbl> column - it's a number. We want it to be a <chr> column - text - so we can use it in joins.
 
-**Task** Run the following code to change the datatype of ZCTA5N from numeric to character. What's the datatype of ZCTA5N now? **Answer**
+**Task** Run the following code to change the datatype of ZCTA5N from numeric to character. What's the datatype of ZCTA5N now? **Answer It is finally into a chracter type so now it is much easier to uniformly merge the two**
 
 ```{r}
 maryland_zcta <- maryland_zcta |> mutate(across(ZCTA5N, as.character))
