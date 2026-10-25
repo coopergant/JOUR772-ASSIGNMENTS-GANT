@@ -29,8 +29,16 @@ This week we'll be combining and joining data to make it more useful and to ask 
 
 ```{r}
 # load and combine the call data from those three counties
+
+cecil_911 <- read_csv("data/cecil_911.csv") |> clean_names()
+carroll_911 <- read_csv("data/carroll_911.csv") |> clean_names()
+allegany_911 <- read_csv("data/allegany_911.csv") |> clean_names()
+
 ACC_combined <- bind_rows(list(cecil_911, carroll_911, allegany_911))
 view(ACC_combined)
+
+ACC_combined <- bind_rows(list(cecil_911, carroll_911, allegany_911))
+
 
 ```
 
@@ -51,9 +59,9 @@ maryland_zcta <- read_csv("data/maryland_zcta.csv") |>
 
 ## Answer questions
 
-Q1. Let's start with our data from Allegany, Cecil and Carroll counties. Write code to generate a dataframe that shows the total number of calls for each county. What's the order of counties from most calls to least? The MOST CALLS is Carroll which had 448. The second-most is Cecil, with 438. The last amount is Allegany, which had 418.
+Q1. Let's start with our data from Allegany, Cecil and Carroll counties. Write code to generate a dataframe that shows the total number of calls for each county. What's the order of counties from most calls to least?
 
-A1.
+A1. The MOST CALLS is Carroll which had 448. The second-most is Cecil, with 438. The last amount is Allegany, which had 418.
 
 ```{r}
 
@@ -68,14 +76,20 @@ calls_by_county
 
 Q2. In your combined dataframe that you used in A1, add a column for the month of each call, then write code to show the total number of calls per county and month. Are there any outliers or noteworthy results? Describe the general pattern of the results.
 
+There are a ton of calls in August and September. Also just a ton in summer in general. Probably because people are outside more, which is where (i would imagine) a lot of nonsense happens.
+
 Then calculate the most calls per county and location. Which location had the most calls - where and what is that location?
+
+314 Grove Neck Rd, a drug and rehab location.
 
 A2.
 
 ```{r}
+  ACC_combined |>
+  group_by(county, location) |>
+  summarise(total_calls = n()) |>
+  arrange(desc(total_calls))
 
-calls_by_county <- calls_by_county |>
-  mutate(month = month(date, label = TRUE))
 ```
 
 Q3. Let's turn to the Baltimore City data. You're interested in exploring calls in zip codes with a high percentage of children under 18. Write code to isolate calls in zip codes where the percentage of under 18 population is at least 75% and then show the zip code and population and how many calls occurred in each of those zip codes.
@@ -89,6 +103,8 @@ Which zip code has the highest rate of calls per 1,000 people? Find the neighbor
 A3.
 
 ```{r}
+baltimore_plus_demographics <- baltimore_county_911 |>
+  left_join(maryland_zcta, join_by(zcta5))
 
 ```
 
