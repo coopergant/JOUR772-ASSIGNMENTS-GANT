@@ -135,6 +135,11 @@ nrow(owning_your_home)
 trying to visualize (ignore this prof trielli its prob bad lol)
 
 ```{r}
+ownership_in_relation_to_calls <- baltimore_plus_demographics |>
+  group_by(zcta5, pct_homeowner) |>
+  summarise(total_calls = n())
 
-tkkt
+ggplot(ownership_in_relation_to_calls, aes(x = pct_homeowner, y = total_calls)) +
+  geom_point()
+
 ```
