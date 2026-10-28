@@ -225,8 +225,6 @@ The Census Bureau has Zip Code Tabulation Areas - they are mostly identical to w
 
 Once we understand the median enrollment rate, I am curious if there are any significant outliers? Any low-enrollment rates competing for top median incomes, or any that have high enrollment rate but low median incomes (students going to further schools and not returning home to work in the community they grew up in?)
 
-TKTKTKTK
-
 ```{r}
 md_zipcodes <- get_acs(geography="zcta", variables = "B19013_001", state='MD', year=2019)
 md_high_schools_with_acs <- md_high_schools |> left_join(md_zipcodes, by=c('zip'='GEOID'))
