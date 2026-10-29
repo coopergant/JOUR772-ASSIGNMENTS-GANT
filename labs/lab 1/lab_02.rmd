@@ -47,7 +47,7 @@ climate_courses <- umd_courses |>
 ```{r}
 fall_2024 <- umd_courses |>
   group_by(department) |> 
-  filter (term==202408 & syllabus_count >= 1)|> summarize(fall_2024 = n())|> arrange(desc(department))
+  filter (term==202408 & syllabus_co4unt >= 1)|> summarize(fall_2024 = n())|> arrange(desc(department))
 ```
 
 **'Q3 Which departments offered the most courses in the Fall 2024 term?**
