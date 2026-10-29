@@ -28,7 +28,6 @@ Loading required libraries for this analysis.
 
 ```{r echo=FALSE, message=FALSE}
 library(tidyverse)
-library(lubridate)
 library(janitor)
 library(ggplot2)
 ```
@@ -39,12 +38,15 @@ In this section, describe the source of the data, write a basic data dictionary 
 
 ```{r}
 # Load required data
-cleaned_homicide_data <- read.csv("data/homicide-data.csv") |> clean_names()
+homicide_data <- read_csv("data/homicide-data.csv", locale = readr::locale(encoding = "Latin1"))
 # Path to data should be loaded from folder "data" i.e. read_ctsv("data/name_of_data.csv")
 
 # Clean required data and prepare for analysis if needed. 
+cleaned_up_homicide_data <- homicide_data |>
+  clean_names()
 
 
+glimpse(homicide_data)
 ```
 
 ## Sentences to Engineer
@@ -59,6 +61,7 @@ In this notebook, we are reverse engineering five sentences from the story.
 ```{r}
 # Put code to reverse engineer sentence here
 
+
 # Display results of code below this codeblock
 
 ```
@@ -68,11 +71,27 @@ In this notebook, we are reverse engineering five sentences from the story.
 - **Sentence text**: [Of 50 of the nation’s largest cities, Baltimore is one of 34 where police now make homicide arrests less often than in 2014, according to a Washington Post analysis. In Chicago, the homicide arrest rate has dropped 21 percentage points, in Boston it has dropped 12 points and in St. Louis it is down 9.]
 - **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
 
+yes! While this still is certainly not the most efficient lol, it gets the job done. We were able to easily write off every one of their 2014 to the side (or just memorize it) and confirm the following numbers did not go up or down. We will find a more efficient way to do this later, but for now, it gets the job done. Had to back a couple of labs to remember floor_date, but got it nonetheless. Just had to group by city THEN reported date, then get a count of each unique number of tags (uid) with the amount per year. 
+
+
+
 ```{r}
-# Put code to reverse engineer sentence here
+# Put code to reverse engineer sentence here I have my data for each incident. 
+
+# date_organizing <- cleaned_up_homicide_data |> mutate(reported_date = ymd(reported_date))
+
+#yearly_counting <- date_organizing |> group_by(city) |> summarize(reported_date = n()) |> arrange(desc(reported_date))
+
+#yearly_counting <- date_organizing |> mutate(year = year(ymd(reported_date))) |>  count(year) 
+
+#calls_by_county <- homicide_data |> mutate(reported_date = ymd(reported_date)) |> group_by(county) |> summarise(total_calls = n()) |> arrange(desc(city, reported year))
 
 # Display results of code below this codeblock
 
+homicide_data |> mutate(reported_date = ymd(reported_date)) |> mutate(reported_year = floor_date(reported_date, "year")) |>
+  group_by(city, reported_year) |>
+  summarise(total_uids = n()) |>
+  arrange(city, reported_year)
 ```
 
 ### Sentence 3
