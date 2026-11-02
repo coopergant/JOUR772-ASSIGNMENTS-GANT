@@ -37,7 +37,7 @@ You'll need your Census API Key:
 
 ```{r echo=FALSE}
 
-census_api_key("4fe8b9deb4f8cd653631f64f1f880ab19eb6b850", overwrite = TRUE, install = TRUE)
+census_api_key("fix", overwrite = TRUE, install = TRUE)
 
 ```
 
