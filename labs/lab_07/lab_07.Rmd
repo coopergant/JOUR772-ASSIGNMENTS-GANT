@@ -90,9 +90,9 @@ Which zip code has the highest rate of calls? Which has the lowest?
 
 ```{r}
 
-md_calls <- read_csv("data/montgomery_2022_overdoses.csv")
+maryland_calls <- read_csv("data/montgomery_2022_overdoses.csv")
 
-zipcode_by_diff)calls <- md_calls |>
+zipcode_by_diff_calls <- maryland_calls |>
   mutate(zip = as.character(zip)) |>
   group_by(zip) |>
   summarise(total_calls = n())
