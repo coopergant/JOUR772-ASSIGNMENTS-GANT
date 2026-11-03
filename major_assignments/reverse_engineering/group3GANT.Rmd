@@ -55,7 +55,7 @@ In this notebook, we are reverse engineering five sentences from the story.
 
 ### Sentence 1
 
-- **Sentence text**: [As Baltimore has seen a stunning surge of violence, with nearly a killing each day for the past three years in a city of 600,000, homicide arrests have plummeted. City police made an arrest in 41 percent of homicides in 2014; last year, the rate was just 27 percent, a 14 percentage point drop.]
+- **Sentence text**: [As Baltimore has seen a stunning surge of violence, with nearly a killing each day for the past three years in a city of 600,000, homicide arrests have plummeted. ]
 - **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
 
 ```{r}
@@ -70,9 +70,6 @@ In this notebook, we are reverse engineering five sentences from the story.
 
 - **Sentence text**: [Of 50 of the nation’s largest cities, Baltimore is one of 34 where police now make homicide arrests less often than in 2014, according to a Washington Post analysis. In Chicago, the homicide arrest rate has dropped 21 percentage points, in Boston it has dropped 12 points and in St. Louis it is down 9.]
 - **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
-
-yes! While this still is certainly not the most efficient lol, it gets the job done. We were able to easily write off every one of their 2014 to the side (or just memorize it) and confirm the following numbers did not go up or down. We will find a more efficient way to do this later, but for now, it gets the job done. Had to back a couple of labs to remember floor_date, but got it nonetheless. Just had to group by city THEN reported date, then get a count of each unique number of tags (uid) with the amount per year. 
-
 
 
 ```{r}
@@ -99,6 +96,9 @@ homicide_data |> mutate(reported_date = ymd(reported_date)) |> mutate(reported_y
 - **Sentence text**: [Baltimore is also one of 30 cities that have seen an increase in homicides in recent years, with the greatest raw number increase in killings of any city other than Chicago, which has four times the population. While homicide rates remain near historical lows in most American cities, Baltimore and Chicago are now both seeing murder tallies that rival the early 2000s.]
 - **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
 
+yes! While this still is certainly not the most efficient lol, it gets the job done. We were able to easily write off every one of their 2014 to the side (or just memorize it) and confirm the following numbers did not go up or down. We will find a more efficient way to do this later, but for now, it gets the job done. Had to back a couple of labs to remember floor_date, but got it nonetheless. Just had to group by city THEN reported date, then get a count of each unique number of tags (uid) with the amount per year. 
+
+
 ```{r}
 # Put code to reverse engineer sentence here
 
@@ -114,6 +114,8 @@ homicide_data |> mutate(reported_date = ymd(reported_date)) |> mutate(reported_y
 ```{r}
 # Put code to reverse engineer sentence here
 
+
+
 # Display results of code below this codeblock
 
 ```
@@ -122,6 +124,19 @@ homicide_data |> mutate(reported_date = ymd(reported_date)) |> mutate(reported_y
 
 - **Sentence text**: [Community leaders and residents say that leaves hundreds of families who have been robbed of a loved one without a chance at seeing justice done. Of the 1,002 homicides between 2015 and the beginning of this year, just 252 — one out of every four — resulted in an arrest.]
 - **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
+
+```{r}
+#just baltimore!
+
+BMORE_arrests_per_yearrr <- homicide_data |> 
+  filter(state == "MD") |> 
+  mutate(reported_date = ymd(reported_date), reported_year = year(reported_date)) |> 
+  filter(reported_year %in% c(2015, 2016, 2017)) |> 
+  mutate(disposition = str_to_upper(disposition), arrest_status = case_when( str_detect(disposition, "CLOSED BY ARREST") ~ "Closed by arrest", .default = "Not closed by arrest")) |> 
+  group_by(city, reported_year, arrest_status) |> 
+  summarise(total_uids = n(), .groups = "drop")
+
+```
 
 ```{r}
 # Put code to reverse engineer sentence here
