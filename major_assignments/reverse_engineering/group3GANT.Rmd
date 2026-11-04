@@ -56,13 +56,30 @@ In this notebook, we are reverse engineering five sentences from the story.
 ### Sentence 1
 
 - **Sentence text**: [As Baltimore has seen a stunning surge of violence, with nearly a killing each day for the past three years in a city of 600,000, homicide arrests have plummeted. ]
+
 - **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
+
+  Yes, by the grace of GOD lol. This was a pain.
+
+  We took the data, mutated a new row that would show us the data that was in MD (bmore is only city in MD in dataset) and used a case_when to divide it into two datasets – before and after Jan 1, 2015 (we had to come to the conclusion THAT was the starting date after incorrectly assuming it was Jan 1, 2014. We came to this decision by looking at the data and seeing that the most recent date of UIDs included in the dataset was on Dec. 31, 2017, which would then make "the last three years worth of data" be starting in 2015.) and then from there taking the total amount of UIDS (homicides) over three years and dividing it up by 365\*3 (the total amount of days in the last three years) and we are then given a per-day mean, which, because the original sentence says NEARLY a killing (UID) per day, we can estimate it will be above a .7 but not yet 1, which our result is 0.9150685, just under one. Nearly.
+
+lol
 
 ```{r}
 # Put code to reverse engineer sentence here
+homicide_with_cw <- homicide_data |>
+  mutate(reported_date = ymd(reported_date)) |>
+  mutate(bmore_since_2014 = case_when(
+    state == "MD" & reported_date >= "2015-01-01" ~ "post-2015",
+    .default = "pre-2015"
+  ))
 
-
+homicide_with_cw |>
+  filter(bmore_since_2014 == "post-2015") |>
+  summarise(total_uids = n()) / (365*3)
 # Display results of code below this codeblock
+
+
 
 ```
 
@@ -71,8 +88,13 @@ In this notebook, we are reverse engineering five sentences from the story.
 - **Sentence text**: [Of 50 of the nation’s largest cities, Baltimore is one of 34 where police now make homicide arrests less often than in 2014, according to a Washington Post analysis. In Chicago, the homicide arrest rate has dropped 21 percentage points, in Boston it has dropped 12 points and in St. Louis it is down 9.]
 - **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
 
-
 ```{r}
+homicide_with_cw <- homicide_data |>
+  mutate(reported_date = ymd(reported_date)) |>
+  mutate(bmore_since_2014 = case_when(
+    state == "MD" & disposition != "CLOSED WITH ARREST" & reported_date >= "2015-01-01" ~ "post-2015",
+    .default = "pre-2015"
+  ))
 
 ```
 
@@ -81,8 +103,7 @@ In this notebook, we are reverse engineering five sentences from the story.
 - **Sentence text**: [Baltimore is also one of 30 cities that have seen an increase in homicides in recent years, with the greatest raw number increase in killings of any city other than Chicago, which has four times the population. While homicide rates remain near historical lows in most American cities, Baltimore and Chicago are now both seeing murder tallies that rival the early 2000s.]
 - **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
 
-yes! While this still is certainly not the most efficient lol, it gets the job done. We were able to easily write off every one of their 2014 to the side (or just memorize it) and confirm the following numbers did not go up or down. We will find a more efficient way to do this later, but for now, it gets the job done. Had to back a couple of labs to remember floor_date, but got it nonetheless. Just had to group by city THEN reported date, then get a count of each unique number of tags (uid) with the amount per year. 
-
+yes! While this still is certainly not the most efficient lol, it gets the job done. We were able to easily write off every one of their 2014 to the side (or just memorize it) and confirm the following numbers did not go up or down. We will find a more efficient way to do this later, but for now, it gets the job done. Had to back a couple of labs to remember floor_date, but got it nonetheless. Just had to group by city THEN reported date, then get a count of each unique number of tags (uid) with the amount per year.
 
 ```{r}
 # Put code to reverse engineer sentence here
@@ -107,20 +128,25 @@ homicide_data |> mutate(reported_date = ymd(reported_date)) |> mutate(reported_y
 
 # Display results of code below this codeblock
 
+
 ```
 
 ### Sentence 5
 
 - **Sentence text**: [Community leaders and residents say that leaves hundreds of families who have been robbed of a loved one without a chance at seeing justice done. Of the 1,002 homicides between 2015 and the beginning of this year, just 252 — one out of every four — resulted in an arrest.]
+
 - **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
+
+  Yes, we were able to! By filtering out to only observe the data that is AFTER Jan. 1, 2015, and having it group by disposition, we can see the 252, and to save myself the pain in the tail of writing more complex code, can just find what percentage one number is of a greater number by dividing the smaller number(252) by the greater number (252+720+30), then multiply the result by 100... which gives us the 25.15% point, confirming just one out of every four.
 
 ```{r}
 homicide_data |> filter(state == "MD") |> 
-  mutate(reported_date = ymd(reported_date)) |>  filter(reported_date >= ymd("2015-01-01") & reported_date < ymd("2026-01-01")) |>
+  mutate(reported_date = ymd(reported_date)) |>  filter(reported_date >= ymd("2015-01-01")) |>
   group_by(disposition) |>
   summarise(total_uids = n()) |>
   arrange(desc(total_uids))
 
+(252/(252+720+30))*100
 ```
 
 ```{r}
