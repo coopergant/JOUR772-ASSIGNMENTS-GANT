@@ -73,22 +73,7 @@ In this notebook, we are reverse engineering five sentences from the story.
 
 
 ```{r}
-# Put code to reverse engineer sentence here I have my data for each incident. 
 
-# date_organizing <- cleaned_up_homicide_data |> mutate(reported_date = ymd(reported_date))
-
-#yearly_counting <- date_organizing |> group_by(city) |> summarize(reported_date = n()) |> arrange(desc(reported_date))
-
-#yearly_counting <- date_organizing |> mutate(year = year(ymd(reported_date))) |>  count(year) 
-
-#calls_by_county <- homicide_data |> mutate(reported_date = ymd(reported_date)) |> group_by(county) |> summarise(total_calls = n()) |> arrange(desc(city, reported year))
-
-# Display results of code below this codeblock
-
-homicide_data |> mutate(reported_date = ymd(reported_date)) |> mutate(reported_year = floor_date(reported_date, "year")) |>
-  group_by(city, reported_year) |>
-  summarise(total_uids = n()) |>
-  arrange(city, reported_year)
 ```
 
 ### Sentence 3
@@ -101,6 +86,10 @@ yes! While this still is certainly not the most efficient lol, it gets the job d
 
 ```{r}
 # Put code to reverse engineer sentence here
+homicide_data |> mutate(reported_date = ymd(reported_date)) |> mutate(reported_year = floor_date(reported_date, "year")) |>
+  group_by(city, reported_year) |>
+  summarise(total_uids = n()) |>
+  arrange(city, reported_year)
 
 # Display results of code below this codeblock
 
@@ -126,15 +115,11 @@ yes! While this still is certainly not the most efficient lol, it gets the job d
 - **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
 
 ```{r}
-#just baltimore!
-
-BMORE_arrests_per_yearrr <- homicide_data |> 
-  filter(state == "MD") |> 
-  mutate(reported_date = ymd(reported_date), reported_year = year(reported_date)) |> 
-  filter(reported_year %in% c(2015, 2016, 2017)) |> 
-  mutate(disposition = str_to_upper(disposition), arrest_status = case_when( str_detect(disposition, "CLOSED BY ARREST") ~ "Closed by arrest", .default = "Not closed by arrest")) |> 
-  group_by(city, reported_year, arrest_status) |> 
-  summarise(total_uids = n(), .groups = "drop")
+homicide_data |> filter(state == "MD") |> 
+  mutate(reported_date = ymd(reported_date)) |>  filter(reported_date >= ymd("2015-01-01") & reported_date < ymd("2026-01-01")) |>
+  group_by(disposition) |>
+  summarise(total_uids = n()) |>
+  arrange(desc(total_uids))
 
 ```
 
