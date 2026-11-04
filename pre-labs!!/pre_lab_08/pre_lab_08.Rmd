@@ -32,7 +32,7 @@ The dataset we'll use is 911 overdose calls from Baltimore County in 2022. Let's
 
 ### Task 2: Load data
 
-**Task** Run the following code to load the data. In the space below, indicate how many rows and columns it has. **Answer**
+**Task** Run the following code to load the data. In the space below, indicate how many rows and columns it has. **Answer 3822 rows and 4 columns**
 
 ```{r}
 baltco_911_calls <- read_csv("data/baltco_911_calls.csv")
@@ -52,7 +52,9 @@ First, we'll add a month column to our dataframe using lubridate.
 
 ### Task 3: Add a month column to our 911 calls dataframe using lubridate and calculate the number of calls for each month
 
-**Task** Run the following code to add a month column to our dataframe using lubridate and count the number of calls for each month. In the space below, explain what each step of the code below is doing in English. Note the "label=TRUE" part in the mutate statement. **Answer**
+**Task** Run the following code to add a month column to our dataframe using lubridate and count the number of calls for each month. In the space below, explain what each step of the code below is doing in English. Note the "label=TRUE" part in the mutate statement.
+
+**Answer) it is creating a new dataset from the** baltco_911_calls and making it into baltco_911_calls_by_month. to do so, they are taking baltco_911_calls, mutating a new row called 'month' (which is made from lubridating the one there into mdy format , then grouping the data by months and summarizing the total amount of calls per month and arranging it top to bottom of most calls to least!
 
 ```{r}
 baltco_911_calls_by_month <- baltco_911_calls |>
@@ -70,7 +72,7 @@ With ggplot, the first thing we'll always do is draw a blank canvas that will co
 
 ### Task 4: Create an empty ggplot container
 
-**Task** Run the following code. Explain what you see after running the code in the space below. **Answer**
+**Task** Run the following code. Explain what you see after running the code in the space below. **Answer nothing. blank white square lmao**
 
 ```{r}
 baltco_911_calls_by_month |>
@@ -101,7 +103,7 @@ After we've invoked the ggplot() function, you'll notice we're using a + symbol.
 
 ### Task 5: Run the following code
 
-**Task** Run the following code. Explain what you see after running the code in the space below. **Answer**
+**Task** Run the following code. Explain what you see after running the code in the space below. **Answer a nice grayed out barchart**
 
 ```{r}
 baltco_911_calls_by_month |>
@@ -113,7 +115,7 @@ This is a very basic chart. But it's hard to derive much meaning from this chart
 
 ### Task 6: Run the following code
 
-**Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last codeblock? **Answer**
+**Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last codeblock? **Answer its now organized in order of least on left and most on right and has a** geom_bar in code
 
 ```{r}
 baltco_911_calls_by_month |>
@@ -125,7 +127,7 @@ This is a little more useful. But the bottom is kind of a mess, with overlapping
 
 ### Task 7: Run the following code
 
-**Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last codeblock? **Answer**
+**Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last codeblock? **Answer its now running left to ride horizontal and has** coord_flip() in the code
 
 ```{r}
 baltco_911_calls_by_month |>
@@ -144,7 +146,7 @@ It's kind of like applying CSS to html. Here I'm changing the theme slightly to 
 
 ### Task 8: Run the following code
 
-**Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last codeblock? **Answer**
+**Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last codeblock? **Answer it has a** theme_minimal() in the code and is much more simple of a design
 
 ```{r}
 baltco_911_calls_by_month |>
@@ -171,7 +173,7 @@ And now we'll apply the economist theme from that package with theme_economist()
 
 ### Task 10: Run the following code
 
-**Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last version of the chart? **Answer**
+**Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last version of the chart? **Answer** theme_economist() is in the code and it has the same color scheme and organization as the Economist
 
 ```{r}
 baltco_911_calls_by_month |>
@@ -185,7 +187,7 @@ Those axis titles are kind of a mess. Let's change "count" on the x axis to "tot
 
 ### Task 11: Run the following code
 
-**Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last codeblock? **Answer**
+**Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last codeblock? **Answer we now have** title="More 911 Overdose Calls in Warmer Months", x = "month", y = "total calls", caption = "source: Baltimore County" ... so actual names on the data! since the chart is flipped, the x label ends up on the vertical axis!
 
 ```{r}
 baltco_911_calls_by_month |>
@@ -214,7 +216,7 @@ So, let's use the same Baltimore County data and generate a count of contributio
 
 ### Task 12: Create a dataframe of 911 calls by date
 
-**Task** Run the following code. Explain what you see after running the code in the space below. **Answer**
+**Task** Run the following code. Explain what you see after running the code in the space below. **Answer the amount of calls on each date in 2022**
 
 ```{r}
 baltco_911_calls_by_date <- baltco_911_calls |>
@@ -232,7 +234,9 @@ We'll put the date on the x axis and total contributions on the y axis.
 
 ### Task 13: Run the following code
 
-**Task** Run the following code. Explain what you see after running the code in the space below. **Answer**
+**Task** Run the following code. Explain what you see after running the code in the space below.
+
+**Answer) complete nonsense LOL (a line graph that is much too squiggly and compressed to understand**
 
 ```{r}
 baltco_911_calls_by_date |>
@@ -250,7 +254,7 @@ We'll set the date_breaks to appear for every week; if we wanted every month, we
 
 ### Task 14: Run the following code
 
-**Task** Run the following code. Explain what you see after running the code in the space below. **Answer**
+**Task** Run the following code. Explain what you see after running the code in the space below. **Answer Holy COW the names along the date x axis are CRAMMED and impossible to make out**
 
 ```{r}
 baltco_911_calls_by_date |>
@@ -265,6 +269,8 @@ Those are a little hard to read, so we can turn them 45 degrees to remove the ov
 
 **Task** Run the following code. Explain what you see after running the code in the space below. **Answer**
 
+a much more organized line graph chronologically showing the number of calls throughout 2022 and we can now read the bottom dates since they are at an angle.
+
 ```{r}
 baltco_911_calls_by_date |>
   ggplot() + 
@@ -278,3 +284,25 @@ baltco_911_calls_by_date |>
 Again, this isn't as pretty as we could make it. But by charting this, we can quickly see some outliers that could guide our reporting.
 
 We're just scratching the surface of what ggplot can do, and chart types. There's so much more you can do, so many other chart types you can make. But the basics we've shown here will get you started.
+
+one more for ole coop just to see something:
+
+```{r}
+baltco_911_calls_by_date |>
+  ggplot() + 
+  geom_line(aes(x=date, y=total_calls)) + 
+  scale_x_date(date_breaks = "4 week", date_labels = "%b %d") +
+  theme(
+    axis.text.x = element_text(angle = 90,  hjust=1)
+  )
+```
+
+```{r}
+baltco_911_calls_by_date |>
+  ggplot() + 
+  geom_line(aes(x=date, y=total_calls)) + 
+  scale_x_date(date_breaks = "1 week", date_labels = "%b %d") +
+  theme(
+    axis.text.x = element_text(angle = 45,  hjust=1)
+  )
+```
