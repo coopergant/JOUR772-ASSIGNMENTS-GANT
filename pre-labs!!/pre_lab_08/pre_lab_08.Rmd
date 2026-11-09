@@ -24,8 +24,11 @@ Let's revisit some data we've used in the past and turn it into charts. First, l
 **Task** Run the following code to load packages.
 
 ```{r}
+options(scipen=999)
 library(tidyverse)
 library(lubridate)
+library(tidycensus)
+library(janitor)
 ```
 
 The dataset we'll use is 911 overdose calls from Baltimore County in 2022. Let's load it.
@@ -250,8 +253,7 @@ Right now, it's kind of hard to see specifics, though. When did some of those sm
 
 We can't really tell. So let's modify the x axis to have one tick mark and label per month. We can do that with a function called scale_x_date().
 
-We'll set the date_breaks to appear for every week; if we wanted every month, we'd say date_breaks = "1 month". We can set the date to appear as month abbreviated name (%b) and day (%d).
-
+ap
 ### Task 14: Run the following code
 
 **Task** Run the following code. Explain what you see after running the code in the space below. **Answer Holy COW the names along the date x axis are CRAMMED and impossible to make out**
