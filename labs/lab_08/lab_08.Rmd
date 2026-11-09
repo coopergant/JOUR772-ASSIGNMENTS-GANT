@@ -47,7 +47,7 @@ You will need to create columns for the date, week and month based on the existi
 
 Compare the results here to those from the pre_lab_08 bar chart - are there major differences in the months with the highest and lowest figures? Describe that below.
 
-**A1. Yes! The one in pre_lab has August as its most-called-in month, whereas this chart has December! Also the second month is May in the pre_lab but this one has July as its most-called-in month!**
+**A1. Yes! The one in pre_lab has August as its most-called-in month, whereas this chart has December! Also the second month is May in the pre_lab but this one has July as its second-most-called-in month!**
 
 ```{r}
 calls_by_month <- pg_count_911_OD_calls |>
