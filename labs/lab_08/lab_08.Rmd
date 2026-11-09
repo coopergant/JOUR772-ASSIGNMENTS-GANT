@@ -121,7 +121,7 @@ To answer this question, do the following:
 6.  Add a label for each point that shows the zip code using geom_text() - see some examples of its use at <https://ggplot2.tidyverse.org/reference/geom_text.html#ref-examples>. Try to make the names as easy to read as possible by avoiding overlap.
 7.  In the answer space below, describe what you see and answer the questions posed above. In a general sense, what do you think this means? Feel free to consider the actual raw values: how would you report out the main point(s) of this chart?
 
-**A3.**
+**A3.** It's kind of the sad but expected outcome that the zip codes with higher household median income (getting to the point where I realized i had to use that instead of just general income took longer than the Odyssey lol) tend to have less OD calls. The graf has a natural swoop down as you increase income. I would report though that there are generall two groups clustered together: the 55k-95k income range, and the 100k+ range. Those two are (sadly) so noticeable, it's very apparent where there is a demand for resources!
 
 ```{r}
 census_api_key("deleting so git will save it lmaoo")
@@ -142,12 +142,12 @@ calls_and_income <- calls_by_zip |>
 calls_and_income |>
   ggplot(aes(x = median_income, y = total_calls)) +
   geom_point() +
-  geom_text(aes(label = zip), check_overlap = TRUE, vjust = -0.7, size = 3) +
+  geom_text(aes(label = zip), check_overlap = TRUE, vjust = -1, size = 3) +
   theme_minimal() +
   labs(
     title = "Higher income zipcodes tend to have less OD calls",
     x = "Median household income",
     y = "Total overdose calls",
-    caption = "Source: Prince George's County EMS; U.S. Census Bureau ACS"
+    caption = "Source: Prince George's County EMS and the US Census Bureau ACS"
     )
 ```
