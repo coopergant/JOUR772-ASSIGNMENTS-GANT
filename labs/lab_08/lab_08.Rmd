@@ -87,7 +87,7 @@ calls_by_week |>
   geom_line(aes(x = week, y = total_calls)) +
   scale_x_date(date_breaks = "4 weeks", date_labels = "%b %d") +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   labs(
     title = "July 18 had the most calls of any week",
     x = "Week",
