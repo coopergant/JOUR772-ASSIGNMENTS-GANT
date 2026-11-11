@@ -177,7 +177,7 @@ rates_of14 <- arrest_rates |> filter(reported_year == ymd("2014-01-01") & total_
 # ALL CITY 2015 arrest pct
 rates_of15 <- arrest_rates |> filter(reported_year == ymd("2015-01-01") & total_uids >= 50) |> select(city, state, rate_2015 = arrest_rate)
 
-#side by side and subtract to see which had largest negative number in change column
+#side by side and subtract to see largest negative number in change column
 rates_of14 |> inner_join(rates_of15, join_by(city, state)) |> mutate(change = rate_2015 - rate_2014) |> filter(rate_2014 < 50) |> arrange(change)
 # Display results of code below this codeblock
 
