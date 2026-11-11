@@ -126,17 +126,14 @@ contrasting_this_mf_data <- rates_2014 |>
   arrange(change)
 
 #comparing the two plz goodness gracious work
-compare
+
+contrasting_this_mf_data
 
 nrow(contrasting_this_mf_data)
-compare |> filter(change < 0) |> nrow()
+contrasting_this_mf_data |> filter(change < 0) |> nrow()
 ```
 
 ```{r}
-arrest_rates |>
-  filter(reported_year == ymd("2017-01-01")) |>
-  filter(city == "Tulsa" | city == "Sacramento" | city == "Durham")
-
 
 ```
 
