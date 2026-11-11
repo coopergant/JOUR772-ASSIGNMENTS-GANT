@@ -71,8 +71,7 @@ homicide_with_cw <- homicide_data |>
   mutate(reported_date = ymd(reported_date)) |>
   mutate(bmore_since_2014 = case_when(
     state == "MD" & reported_date >= "2015-01-01" ~ "post-2015",
-    .default = "pre-2015"
-  ))
+    .default = "pre-2015"))
 
 # Display results of code below this codeblock
 
@@ -149,7 +148,33 @@ cleaned_up_homicide_data |> mutate(reported_date = ymd(reported_date)) |> mutate
   arrange(city, reported_year)
 
 # Display results of code below this codeblock
+colnames(hopefully_best_data)
 
+
+#maybe better?
+
+#OMG ITS BETTER YAYYYYYYY :333
+uid_counts <- hopefully_best_data |>
+  mutate(reported_year = floor_date(reported_date, "year")) |>
+  group_by(city, state, reported_year) |>
+  summarise(total_uids = n())
+
+amount_of_uids_14 <- uid_counts |>
+  filter(reported_year == ymd("2014-01-01")) |>
+  select(city, state, amount_of_uids_14 = total_uids)
+
+amount_of_uids_17 <- uid_counts |>
+  filter(reported_year == ymd("2017-01-01")) |>
+  select(city, state, amount_of_uids_17 = total_uids)
+
+change_of_uids <- amount_of_uids_14 |>
+  inner_join(amount_of_uids_17, join_by(city, state)) |>
+  mutate(change = amount_of_uids_17 - amount_of_uids_14) |>
+  filter(change > 0) |>
+  arrange(desc(change))
+
+change_of_uids
+nrow(change_of_uids)
 ```
 
 ### Sentence 4
@@ -174,15 +199,14 @@ rates_of14 |> inner_join(rates_of15, join_by(city, state)) |> mutate(change = ra
 
 
 ```
-```{r}
 
+```{r}
 #why tf is sacramento showing zero
 arrest_rates |>
   filter(city == "Sacramento") |>
   filter(reported_year == ymd("2014-01-01") | reported_year == ymd("2015-01-01")) |>
   select(city, reported_year, total_uids, arrests, arrest_rate)
 ```
-
 
 ### Sentence 5
 
@@ -202,13 +226,8 @@ homicide_data |> filter(state == "MD") |>
 (252/(252+720+30))*100
 ```
 
-
-
 ```{r}
-# Put code to reverse engineer sentence here
-
-# Display results of code below this codeblock
-
+# dummy extra codeblock
 ```
 
 -30-
