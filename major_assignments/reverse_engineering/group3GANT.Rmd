@@ -96,7 +96,7 @@ homicide_with_cw |>
 # why tf is it not reading the dates rifght
 hopefully_best_data <- cleaned_up_homicide_data |> mutate(reported_date = ymd(reported_date))
 
-#mutatin a new row connecting year and arrest percentagesss
+# new rows 4  year and arrest percentagesss
 arrest_rates <- hopefully_best_data |>
   mutate(reported_year = floor_date(reported_date, "year")) |>
   mutate(arrested = case_when(
@@ -107,13 +107,13 @@ arrest_rates <- hopefully_best_data |>
   summarise(total_uids = n(), arrests = sum(arrested)) |>
   mutate(arrest_rate = (arrests / total_uids) * 100)
 
-#creating a 2014 pct row
+#2014 pct row
 rates_2014 <- arrest_rates |>
   filter(reported_year == ymd("2014-01-01")) |>
   select(city, state, rate_2014 = arrest_rate)
 
 
-#NOW creating a 2017 pct row
+#2017 pct row
 rates_2017 <- arrest_rates |>
   filter(reported_year == ymd("2017-01-01")) |>
   select(city, state, rate_2017 = arrest_rate)
@@ -130,7 +130,6 @@ contrasting_this_mf_data <- rates_2014 |>
 contrasting_this_mf_data
 
 nrow(contrasting_this_mf_data)
-contrasting_this_mf_data |> filter(change < 0) |> nrow()
 ```
 
 ```{r}
@@ -164,19 +163,16 @@ Well, yes. Bmore did drop CRAZY going from 2014 to 15, but i also see that San B
 
 ```{r}
 # Put code to reverse engineer sentence here
-
-# lemme see bmore rate again from q2
-arrest_rates |> filter(state == "MD") |> select(reported_year, total_uids, arrest_rate)
-
-# ALL CITY 20144444 arrest pct rate
+# 20144444
 rates_of14 <- arrest_rates |> filter(reported_year == ymd("2014-01-01") & total_uids >= 50) |> select(city, state, rate_2014 = arrest_rate)
 
-# ALL CITY 2015 arrest pct
+# 2015 
 rates_of15 <- arrest_rates |> filter(reported_year == ymd("2015-01-01") & total_uids >= 50) |> select(city, state, rate_2015 = arrest_rate)
 
-#side by side and subtract to see largest negative number in change column
-rates_of14 |> inner_join(rates_of15, join_by(city, state)) |> mutate(change = rate_2015 - rate_2014) |> filter(rate_2014 < 50) |> arrange(change)
 # Display results of code below this codeblock
+
+#side by side, subtract to see largest change 
+rates_of14 |> inner_join(rates_of15, join_by(city, state)) |> mutate(change = rate_2015 - rate_2014) |> filter(rate_2014 < 50) |> arrange(change)
 
 
 ```
