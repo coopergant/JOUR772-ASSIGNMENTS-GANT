@@ -186,6 +186,7 @@ Well, yes. Bmore did drop CRAZY going from 2014 to 15, but i also see that San B
 
 ```{r}
 # Put code to reverse engineer sentence here
+
 # 20144444
 rates_of14 <- arrest_rates |> filter(reported_year == ymd("2014-01-01") & total_uids >= 50) |> select(city, state, rate_2014 = arrest_rate)
 
