@@ -74,12 +74,11 @@ homicide_with_cw <- homicide_data |>
     .default = "pre-2015"
   ))
 
+# Display results of code below this codeblock
+
 homicide_with_cw |>
   filter(bmore_since_2014 == "post-2015") |>
   summarise(total_uids = n()) / (365*3)
-# Display results of code below this codeblock
-
-
 
 ```
 
