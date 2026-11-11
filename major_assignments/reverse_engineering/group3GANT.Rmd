@@ -95,13 +95,12 @@ homicide_with_cw |>
 # why tf is it not reading the dates rifght
 hopefully_best_data <- cleaned_up_homicide_data |> mutate(reported_date = ymd(reported_date))
 
-# new rows 4  year and arrest percentagesss
+# new rows for the year and arrest pct
 arrest_rates <- hopefully_best_data |>
   mutate(reported_year = floor_date(reported_date, "year")) |>
   mutate(arrested = case_when(
     str_detect(str_to_upper(disposition), "CLOSED BY ARREST") ~ 1,
-    .default = 0
-  )) |>
+    .default = 0 )) |>
   group_by(city, state, reported_year) |>
   summarise(total_uids = n(), arrests = sum(arrested)) |>
   mutate(arrest_rate = (arrests / total_uids) * 100)
@@ -175,6 +174,15 @@ rates_of14 |> inner_join(rates_of15, join_by(city, state)) |> mutate(change = ra
 
 
 ```
+```{r}
+
+#why tf is sacramento showing zero
+arrest_rates |>
+  filter(city == "Sacramento") |>
+  filter(reported_year == ymd("2014-01-01") | reported_year == ymd("2015-01-01")) |>
+  select(city, reported_year, total_uids, arrests, arrest_rate)
+```
+
 
 ### Sentence 5
 
@@ -193,6 +201,8 @@ homicide_data |> filter(state == "MD") |>
 
 (252/(252+720+30))*100
 ```
+
+
 
 ```{r}
 # Put code to reverse engineer sentence here
