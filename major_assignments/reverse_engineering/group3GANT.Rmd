@@ -90,47 +90,30 @@ homicide_with_cw |>
   I was not, which has me very suspicious. I cannot prove that. I have 30 cities that declined, 1 that stayed the same, and the rest increase (at least when looking at it by percentage from INNNN 2014 versus INNN 2017)
 
 ```{r}
-
-# why tf is it not reading the dates rifght
-hopefully_best_data <- cleaned_up_homicide_data |> mutate(reported_date = ymd(reported_date))
-
-# new rows for the year and arrest pct
-arrest_rates <- hopefully_best_data |>
-  mutate(reported_year = floor_date(reported_date, "year")) |>
-  mutate(arrested = case_when(
-    str_detect(str_to_upper(disposition), "CLOSED BY ARREST") ~ 1,
-    .default = 0 )) |>
-  group_by(city, state, reported_year) |>
-  summarise(total_uids = n(), arrests = sum(arrested)) |>
-  mutate(arrest_rate = (arrests / total_uids) * 100)
-
-#2014 pct row
 rates_2014 <- arrest_rates |>
-  filter(reported_year == ymd("2014-01-01")) |>
-  select(city, state, rate_2014 = arrest_rate)
+  filter(year == 2014) |>
+  select(city, state, rates_2014 = arrest_rate)
 
-
-#2017 pct row
 rates_2017 <- arrest_rates |>
-  filter(reported_year == ymd("2017-01-01")) |>
-  select(city, state, rate_2017 = arrest_rate)
+  filter(year == 2017) |>
+  select(city, state, rates_2017 = arrest_rate)
 
+city_comparison <- rates_2014 |>
+  inner_join(rates_2017, by = c("city", "state")) |>
+  mutate(
+    percentage_point_drop = rates_2014 - rates_2017
+  ) |>
+  arrange(desc(percentage_point_drop))
+city_comparison |>
+  summarise(
+    cities_with_decline = sum(percentage_point_drop > 0)
+  )
 
-#put em side by side
-contrasting_this_mf_data <- rates_2014 |>
-  inner_join(rates_2017, join_by(city, state)) |>
-  mutate(change = rate_2017 - rate_2014) |>
-  arrange(change)
-
-#comparing the two plz goodness gracious work
-
-contrasting_this_mf_data
-
-nrow(contrasting_this_mf_data)
+city_comparison |>
+  filter(city == "Chicago" | city == "Boston" | city == "St. Louis" | city == "Baltimore"| city == "Atlanta"| city == "Baton Rouge" | city == "Birmingham" | city == "Buffalo"| city == "Charlotte"| city == "Cincinnati"|city == "Columbus"|city == "Dallas"| city == "Denver"|city == "Detroit"|city == "Durham"|city == "Fort Worth"|city == "Fresno"|city == "Houston"|city == "Indianapolis"|city == "Jacksonville"|city == "Kansas City"|city == "Las Vegas"|city == "Long Beach"|city == "Los Angeles"|city == "Louisville"|city == "Memphis"|city == "Miami"|city == "Milwaukee"|city == "Minneapolis"|city == "Nashville"|city == "New Orleans"|city == "New York"|city == "Oakland"|city == "Oklahoma City"|city == "Omaha"|city == "Philadelphia"|city == "Phoenix"|city == "Pittsburgh"|city == "Richmond"|city == "Sacremento"|city == "San Antonio"|city == "San Bernardino"|city == "San Diego"|city == "San Francisco"|city == "Savannah"|city == "Stockton"|city == "Tampa"|city == "Tulsa"|city == "Washington")
 ```
 
 ```{r}
-
 ```
 
 ### Sentence 3
@@ -179,31 +162,26 @@ nrow(change_of_uids)
 
 ### Sentence 4
 
-- **Sentence text**: [.....in Baltimore there is an indisputable Freddie Gray effect. ....For most of the decade before 2015, Baltimore’s annual homicide arrest rate hovered at about 40 percent. Since 2015, the arrest rate hasn’t topped 30 percent in any year. And while most cities saw their arrest rates drop gradually, Baltimore’s decline was sudden — plummeting 15 percentage points in 2015, after Gray’s death, the largest single-year drop for any city already solving less than half its homicides.]
+- **Sentence text**: [[*For most of the decade before 2015, Baltimore’s annual homicide arrest rate hovered at about 40 percent. Since 2015, the arrest rate hasn’t topped 30 percent in any year. And while most cities saw their arrest rates drop gradually, Baltimore’s decline was sudden — plummeting 15 percentage points in 2015, after Gray’s death*]{.underline}, the largest single-year drop for any city already solving less than half its homicides.]
 - **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
 
 Well, yes. Bmore did drop CRAZY going from 2014 to 15, but i also see that San Bernadino had the BIGGEST drop if you dont have a minimum of total uids... so i think its not fair to say what WAPO said but if they clarified that
 
 ```{r}
-# Put code to reverse engineer sentence here
 
-# 20144444
-rates_of14 <- arrest_rates |> filter(reported_year == ymd("2014-01-01") & total_uids >= 50) |> select(city, state, rate_2014 = arrest_rate)
+#baltimore alone
+ends_w_arrest_count |>
+  filter(state == "MD") |>
+  arrange(reported_year) |> mutate(pct_arrst = (arrests / total_uids)*100)
 
-# 2015 
-rates_of15 <- arrest_rates |> filter(reported_year == ymd("2015-01-01") & total_uids >= 50) |> select(city, state, rate_2015 = arrest_rate)
+#now other cities
 
-# Display results of code below this codeblock
-
-#side by side, subtract to see largest change 
-rates_of14 |> inner_join(rates_of15, join_by(city, state)) |> mutate(change = rate_2015 - rate_2014) |> filter(rate_2014 < 50) |> arrange(change)
-
-
+ends_w_arrest_count |> group_by(city) |> arrange(city, reported_year) |> mutate(pct_arrst = (arrests / total_uids)*100) |> filter(pct_arrst < 50)
 ```
 
 ```{r}
 #why tf is sacramento showing zero
-arrest_rates |>
+ends_w_arrest_pct |>
   filter(city == "Sacramento") |>
   filter(reported_year == ymd("2014-01-01") | reported_year == ymd("2015-01-01")) |>
   select(city, reported_year, total_uids, arrests, arrest_rate)
@@ -229,6 +207,7 @@ homicide_data |> filter(state == "MD") |>
 
 ```{r}
 # dummy extra codeblock
+
 ```
 
 -30-
