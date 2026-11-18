@@ -66,19 +66,24 @@ In this notebook, we are reverse engineering five sentences from the story.
 lol
 
 ```{r}
-# Put code to reverse engineer sentence here
 homicide_with_cw <- homicide_data |>
   mutate(reported_date = ymd(reported_date)) |>
-  mutate(bmore_since_2014 = case_when(
+  mutate(bmore_since_2015 = case_when(
     state == "MD" & reported_date >= "2015-01-01" ~ "post-2015",
     .default = "pre-2015"))
 
-# Display results of code below this codeblock
-
 homicide_with_cw |>
-  filter(bmore_since_2014 == "post-2015") |>
+  filter(bmore_since_2015 == "post-2015") |>
   summarise(total_uids = n()) / (365*3)
 
+baltimore_by_year <- homicide_data |>
+  filter(state == "MD") |>
+  mutate(reported_year = floor_date(ymd(reported_date), "year"),
+         arrested = case_when(str_detect(str_to_upper(disposition), "CLOSED BY ARREST") ~ 1, .default = 0)) |>
+  group_by(reported_year) |>
+  summarise(total_uids = n(), arrests = sum(arrested))
+
+baltimore_by_year
 ```
 
 ### Sentence 2
@@ -90,6 +95,9 @@ homicide_with_cw |>
   I was not, which has me very suspicious, since I cannot prove that. Per my code, 49 cities that had at least 10 incidents in both 2014 and 2016. Of those, 24 had fewer arrests in 2016 than in 2014. The other 25 had the same number or more. So, depending on when you consider the phrase "police [***now***]{.underline} make...." (specifically the phrase NOW) it is up for debate. I would say we cannot prove that solely because "now" is so loose. 2017? No dip it'll be less – they have significantly less data across the board. 2016? that year doesnt align with the claim being made.
 
 ```{r}
+ends_w_arrest_count <- cleaned_up_homicide_data |>
+  mutate(arrest_uids = sum(str_detect(str_to_upper(disposition), "CLOSED BY ARREST")))
+
 arrests_2014 <- ends_w_arrest_count |>
   filter(reported_year == ymd("2014-01-01") & total_uids >= 10) |>
   select(city, state, arrests_2014 = arrests)
