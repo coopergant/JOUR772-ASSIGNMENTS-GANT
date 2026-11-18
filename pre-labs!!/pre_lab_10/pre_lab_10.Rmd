@@ -401,7 +401,7 @@ So let's change the color scale to a "log" scale, which will help us see those d
 
 ### Task: Run code
 
-**Task** Run the following code. Describe the output in the space below. What regional patterns do you see? **Answer**
+**Task** Run the following code. Describe the output in the space below. What regional patterns do you see? **Answer Moco and up to the PA border has a streak of a ton of foreclosures, as well as the county bordering WV in the Appalachian mountains (known for its poverty)**
 
 ```{r}
 ggplot() +
