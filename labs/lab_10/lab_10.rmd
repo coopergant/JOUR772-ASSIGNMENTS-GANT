@@ -73,7 +73,7 @@ ggplot() +
 
 What's the potential story here? Given access to other months' outage data, what would your next steps be in reporting a story?
 
-**A2.**
+**A2. what is going on in talbot county that is causing so many outages? also, are there any data center soon to be built nearby?**
 
 ```{r}
 
