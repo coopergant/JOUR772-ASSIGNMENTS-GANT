@@ -65,7 +65,7 @@ county_shapes_with_moore_brown <- md_counties |>
 ggplot() +
   geom_sf(data = county_shapes_with_moore_brown, aes(fill = difference)) +
   theme_minimal() +
-  scale_fill_viridis_b(option = "magma") +
+  theme("magma") +
   labs(title = "Support for Moore vs Brown", fill = "Gap between Moore and Brown support")
 ```
 
@@ -86,7 +86,7 @@ outage_map_data <- md_counties_with_join_name |>
 outage_map_data |> filter(is.na(rate_per_10000)) |> nrow()
 
 ggplot() + geom_sf(data = outage_map_data, aes(fill = rate_per_10000)) + theme_minimal() +
-  scale_fill_viridis_b(option = "magma", trans = "log") +
+  theme("magma") +
   labs(title = "Washington and Frederick continue to lead in power outages of all MD counties", fill = "Customers without power per 10,000")
 
 census_api_key("keyyyyyy api hereee")
@@ -124,6 +124,6 @@ ggplot() + geom_sf(data = ev_map_data, aes(fill = pct_change)) + theme_minimal()
   labs(title = "Caroline County sees huge increase in number of EVs", fill = "% change in EVs from 2020 to 2023")
 
 ggplot() + geom_sf(data = ev_map_data, aes(fill = ev_per_1000)) + theme_minimal() +
-  scale_fill_viridis_b(option = "magma") +
+  theme("magma") +
   labs(title = "MoCO has highest amount of electric vehicles per population", fill = "EVs per 1,000 people",)
 ```
